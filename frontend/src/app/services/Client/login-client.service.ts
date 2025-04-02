@@ -58,7 +58,7 @@ export class LoginClientService{
         const connecteHeader = response.headers.get('X-Connecte');
         console.log('X-Connecte Header:', connecteHeader);
 
-        return connecteHeader !== null ? parseInt(connecteHeader, 10) : 0;
+        return connecteHeader !== null ? parseInt(connecteHeader, 10) : 1;
       }),
       catchError((error) => {
         console.error('Erreur de vérification du token:', error);
