@@ -1,0 +1,27 @@
+<div class="row">
+  <div class="col-sm-12">
+    <app-card cardTitle="Mon calendrier">
+      <full-calendar [options]="calendarOptions"></full-calendar>
+
+
+      <!-- Modal -->
+      <div id="eventModal" class="modal" tabindex="-1" role="dialog" style="display:none;">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Détails de l'événement</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>Bonjour</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- FullCalendar -->
+      <div id="calendar"></div>
+    </app-card>
+  </div>
+</div>

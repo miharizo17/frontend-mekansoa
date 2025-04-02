@@ -1,0 +1,95 @@
+<div class="row mb-3">
+  <!-- Filtre par employé -->
+  <div class="col-md-5">
+    <label for="employeFilter">Filtrer par employé :</label>
+    <select class="form-control" [(ngModel)]="idEmployeChoisi" (change)="onEmployeChange()" [disabled]="disableEmploye">
+      <option disabled>Tous les employés</option>
+      <option *ngFor="let employe of employes" [value]="employe._id">
+        {{ employe.nom }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Filtre par spécialité -->
+  <div class="col-md-5">
+    <label for="specialiteFilter">Filtrer par spécialité :</label>
+    <select class="form-control" [(ngModel)]="idSpecialiteChoisi" (change)="onSpecialiteChange()" [disabled]="disableSpecialite">
+      <option disabled>Toutes les spécialités</option>
+      <option *ngFor="let specialite of specialites" [value]="specialite._id">
+        {{ specialite.nomSpecialite }}
+      </option>
+    </select>
+  </div>
+</div>
+<table class="table table-striped table-hover mt-3">
+  <thead>
+    <tr>
+      <th>Employe</th>
+      <th>Spécialité</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let specialiteEmploye of filteredSpecialiteEmployes">
+      <td>{{ specialiteEmploye.idEmploye.nom }}</td>
+      <td>{{ specialiteEmploye.idSpecialite.nomSpecialite }}</td>
+      <td>
+        <button class="btn btn-warning btn-sm" (click)="openUpdateModal(specialiteEmploye)">Modifier</button>
+        <button class="btn btn-danger btn-sm" (click)="openDeleteModal(specialiteEmploye)">Supprimer</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+<!-- Modal de modification -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modification</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form #editForm="ngForm">
+          <div class="mb-3">
+            <label for="Spécialité" class="form-label">Spécialité</label>
+            <select class="form-control" [(ngModel)]="selectedSpecialite.idSpecialite" name="idSpecialite" placeholder="Specialite" required>
+              <option *ngFor="let specialite of specialites" [value]="specialite._id">
+                {{specialite.nomSpecialite}}
+              </option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="updateSpecialiteEmploye()" data-bs-dismiss="modal">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Suppression</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form #editForm="ngForm">
+          <div class="mb-3">
+            <label for="categorie" class="form-label">Voulez-vous vraiment confirmer la suppression ?</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="confirmDeleteSpecialiteEmploye()" data-bs-dismiss="modal">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

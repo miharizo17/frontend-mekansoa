@@ -1,0 +1,68 @@
+<div class="row">
+  <div class="col-sm-12">
+    <app-card cardTitle="Validation et Assignement tache au mecanicien">
+      <p>Service</p>
+      <table class="table table-striped table-hover mt-3">
+        <thead>
+          <tr>
+            <th border="1">Id</th>
+            <th border="1">Service</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let service of listeService; let i = index">
+            <td>{{ service.idService._id }}</td>
+            <td>{{ service.idService.nomService }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Specialite Service</p>
+      <div *ngFor="let service of groupedServices">
+        <h3>{{ service.nomService }}</h3>
+        <ul>
+          <li *ngFor="let specialite of service.specialites">
+            {{ specialite.nomSpecialite }}
+          </li>
+        </ul>
+      </div>
+
+      <p>Employes qui ont ces specialite</p>
+      <div *ngFor="let employe of listeEmployeGroupee">
+        <h5>{{ employe.nom }}</h5>
+        <div *ngFor="let specialite of employe.specialites">
+          <label>
+
+            {{ specialite }}
+          </label>
+        </div>
+      </div>
+
+      <p>Employe dispo</p>
+      <ul>
+        <li *ngFor="let employe of listeEmployeDispo">
+          {{ employe.nom }} ({{ employe.specialites.join(', ') }})
+        </li>
+      </ul>
+
+      <p>Employe deja affecte</p>
+      <table class="table table-striped table-hover mt-3">
+        <thead>
+          <tr>
+            <th border="1">Deadline</th>
+            <th border="1">Nom employe</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let employe of listeEmployeAffecte; let i = index">
+            <td>{{ employe.deadline }}</td>
+            <td>{{ employe.idEmploye }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </app-card>
+  </div>
+</div>
+
+

@@ -1,0 +1,158 @@
+<div class="row">
+  <div class="col-sm-12">
+    <app-card cardTitle="Fournisseur">
+      <div class="d-flex justify-content-between align-items-center">
+        <h6 class="m-0" style="color: transparent;">a</h6>
+        <button class="btn btn-primary" (click)="openAddModal()">Ajouter</button>
+      </div>
+
+      <table class="table table-striped table-hover mt-3">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>SiteWeb</th>
+            <th>Pays</th>
+            <th>Adresse</th>
+            <th>Telephone</th>
+            <th>Mail</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let fournisseur of listefournisseur; let i = index">
+            <td>{{ fournisseur.nom }}</td>
+            <td>{{ fournisseur.siteweb }}</td>
+            <td>{{ fournisseur.adresse }}</td>
+            <td>{{ fournisseur.pays.nom_fr_fr }}</td>
+            <td>{{ fournisseur.telephone }}</td>
+            <td>{{ fournisseur.mail }}</td>
+            <td><button class="btn btn-warning mr-3"  (click)="openUpdateModal(fournisseur)">Modifier</button>
+          </tr>
+        </tbody>
+      </table>
+    </app-card>
+  </div>
+</div>
+
+<!-- Modal d'ajout -->
+<div class="modal fade" id="ajoutModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Ajout fournisseur</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form  autocomplete="off">
+      <div class="modal-body">
+          <div class="mb-3">
+            <label for="nom" class="form-label">Nom</label>
+            <input type="text" id="nom" name="nom"  [(ngModel)]="fournisseur.nom" class="form-control" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="siteweb" class="form-label">Site web</label>
+            <input type="text" id="siteweb" name="siteweb" [(ngModel)]="fournisseur.siteweb" class="form-control" />
+          </div>
+
+          <div class="mb-3">
+            <label for="pays" class="form-label">Pays</label>
+            <input type="text" id="pays" name="pays" class="form-control" [(ngModel)]="query" (input)="searchPays()" />
+            <ul *ngIf="paysSuggestions.length > 0" class="list-group mt-2">
+              <li *ngFor="let pays of paysSuggestions" class="list-group-item" (click)="selectSuggestion(pays)">
+                {{ pays.nom_fr_fr }}
+              </li>
+            </ul>
+          </div>
+
+
+          <div class="mb-3">
+            <label for="adresse" class="form-label">Adresse</label>
+            <input type="text" id="adresse" name="adresse" [(ngModel)]="fournisseur.adresse" class="form-control" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="telephone" class="form-label">Téléphone</label>
+            <input type="text" id="telephone" name="telephone" [(ngModel)]="fournisseur.telephone" class="form-control" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="mail" class="form-label">Mail</label>
+            <input type="text" id="mail" name="mail" [(ngModel)]="fournisseur.mail" class="form-control" required />
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="addFournisseur()" data-bs-dismiss="modal">Enregistrer</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal de modification -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modification fournisseur</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="nom" class="form-label">Nom</label>
+          <input type="text" id="nom" name="nom"  [(ngModel)]="selectedFournisseur.nom" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="siteweb" class="form-label">Site web</label>
+          <input type="text" id="siteweb" name="siteweb" [(ngModel)]="selectedFournisseur.siteweb" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+          <label for="adresse" class="form-label">Adresse</label>
+          <input type="text" id="adresse" name="adresse" [(ngModel)]="selectedFournisseur.adresse" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="telephone" class="form-label">Téléphone</label>
+          <input type="text" id="telephone" name="telephone" [(ngModel)]="selectedFournisseur.telephone" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="mail" class="form-label">Mail</label>
+          <input type="text" id="mail" name="mail" [(ngModel)]="selectedFournisseur.mail" class="form-control" required />
+        </div>
+    </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" (click)="confirmUpdateFournisseur()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Supprimer le fournisseur</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form >
+          <div class="mb-3">
+            <label for="marque" class="form-label">Voulez-vous vraiment supprimer le fournisseur {{ selectedFournisseur.nom}}?</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

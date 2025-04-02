@@ -1,0 +1,102 @@
+<div class="row">
+  <div class="col-sm-12">
+    <app-card cardTitle="Piece">
+      <form (submit)="addPiece()" autocomplete="off">
+      <div class="row">
+        <div class="col-3">
+          <input type="text" class="form-control"  [(ngModel)]="piece.nomPiece"  name="nomPiece" placeholder="Nom piece">
+        </div>
+        <div class="col-3">
+          <input type="text" class="form-control"  [(ngModel)]="piece.referencePiece"  name="referencePiece" placeholder="Reference">
+        </div>
+        <div class="col-3">
+          <select class="form-control" name="typePiece"  [(ngModel)]="piece.typePiece" required>
+            <option value="Fer">Fer</option>
+            <option value="Hydraulique">Hydraulique</option>
+          </select>
+        </div>
+        <div class="col-3">
+          <button class="btn btn-primary">Ajouter</button>
+        </div>
+      </div>
+    </form>
+
+    <table class="table table-striped table-hover mt-3">
+        <thead>
+          <tr>
+            <th border="1">Nom piece</th>
+            <th border="1">Reference</th>
+            <th border="1">Type piece</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let piece of pieces; let i = index">
+            <td>{{ piece.nomPiece }}</td>
+            <td>{{ piece.referencePiece }}</td>
+            <td>{{ piece.typePiece }}</td>
+            <td><button class="btn btn-warning mr-3" (click)="openUpdateModal(piece)"  >Modifier</button>
+          </tr>
+        </tbody>
+      </table>
+    </app-card>
+  </div>
+</div>
+
+
+<!-- Modal de modification -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modifier la piece</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form autocomplete="off">
+      <div class="modal-body">
+          <div class="mb-3">
+            <label for="marque" class="form-label">Nom piece</label>
+            <input type="text"  name="nomPiece" [(ngModel)]="selectedPiece.nomPiece" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label for="marque" class="form-label">Reference piece</label>
+            <input type="text"  name="referencePiece" [(ngModel)]="selectedPiece.referencePiece"  class="form-control" required />
+          </div>
+          <select class="form-control" name="typePiece" [(ngModel)]="selectedPiece.typePiece"  required>
+            <option value="Fer">Fer</option>
+            <option value="Hydraulique">Hydraulique</option>
+          </select>
+      </div>
+    </form>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="confirmUpdatePiece()"  data-bs-dismiss="modal">Enregistrer</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+<!-- Modal de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Supprimer la Marque</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="marque" class="form-label">Voulez-vous vraiment supprimer la marque ?</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary"  data-bs-dismiss="modal">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,125 @@
+<app-header-profil></app-header-profil>
+
+<header class="hero">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+      <h1>Votre profil</h1>
+      <button class="btn btn-primary" (click)="openAjoutVoiture()">Ajout voiture</button>
+    </div>
+  </div>
+
+</header>
+
+
+<section id="about" class="container  py-5">
+  <div *ngIf="clientConnecte">
+    <p>Nom: {{ clientConnecte.nom }}</p>
+    <p>Email: {{ clientConnecte.email }}</p>
+    <p>Adresse: {{ clientConnecte.adresse }}</p>
+    <p>Tel: {{ clientConnecte.telephone }}</p>
+  </div>
+
+  <table class="table table-striped table-hover mt-3">
+    <thead>
+      <tr>
+        <th border="1">Numero service</th>
+        <th border="1">Annee</th>
+        <th border="1">Generation</th>
+        <th border="1">Marque</th>
+        <th border="1">Modele</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let voiture of listeVoitures; let i = index">
+        <td>{{ voiture.numeroService }}</td>
+        <td>{{ voiture.idAnnee.annee }}</td>
+        <td>{{ voiture.idGeneration.generation }}</td>
+        <td>{{ voiture.idMarque.marque }}</td>
+        <td>{{ voiture.idModele.modele }}</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+
+<div class="modal fade" id="ajoutVoiture" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-custom">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Ajout voiture</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form autocomplete="off">
+        <div class="modal-body">
+          <div class="mb-3">
+            <div class="row">
+              <div class="col-4">
+                <label for="numeroSerie" class="form-label">Numero serie</label>
+                <input type="text" id="numeroSerie" name="numeroSerie" [(ngModel)]="numeroSerie" class="form-control" />
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-3">
+                <label for="annee" class="form-label">Annee</label>
+                <input type="text" id="annee" name="annee" class="form-control" [(ngModel)]="motCleAnnee"
+                  (input)="searchAnnee()" />
+                <ul *ngIf="anneeSuggestions.length > 0" class="list-group mt-2">
+                  <li *ngFor="let annee of anneeSuggestions" class="list-group-item"
+                    (click)="selectSuggestionAnnee(annee)">
+                    {{ annee.annee }}
+                  </li>
+                </ul>
+              </div>
+
+              <div class="col-3">
+                <label for="generation" class="form-label">Generation</label>
+                <input type="text" id="generation" name="generation" class="form-control" [(ngModel)]="motCleGeneration"
+                  (input)="searchGeneration()" />
+                <ul *ngIf="generationSuggestions.length > 0" class="list-group mt-2">
+                  <li *ngFor="let generation of generationSuggestions" class="list-group-item"
+                    (click)="selectSuggestionGeneration(generation)">
+                    {{ generation.generation }}
+                  </li>
+                </ul>
+              </div>
+
+              <div class="col-3">
+                <label for="modele" class="form-label">Modele</label>
+                <input type="text" id="modele" name="modele" class="form-control" [(ngModel)]="motCleModele"
+                  (input)="searchModele()" />
+                <ul *ngIf="modeleSuggestions.length > 0" class="list-group mt-2">
+                  <li *ngFor="let modele of modeleSuggestions" class="list-group-item"
+                    (click)="selectSuggestionModele(modele)">
+                    {{ modele.modele }}
+                  </li>
+                </ul>
+              </div>
+
+              <div class="col-3">
+                <label for="marque" class="form-label">Marque</label>
+                <input type="text" id="marque" name="marque" class="form-control" [(ngModel)]="motCleMarque"
+                  (input)="searchMarque()" />
+                <ul *ngIf="marqueSuggestions.length > 0" class="list-group mt-2">
+                  <li *ngFor="let marque of marqueSuggestions" class="list-group-item"
+                    (click)="selectSuggestionMarque(marque)">
+                    {{ marque.marque }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="addVoitureClient()">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<app-footer-profil></app-footer-profil>

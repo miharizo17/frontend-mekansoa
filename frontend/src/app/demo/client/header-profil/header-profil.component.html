@@ -1,0 +1,190 @@
+<style>
+  .navbar {
+    background-color: #673ab7;
+    color: white;
+  }
+
+  .footer {
+    background-color: #673ab7;
+    color: white;
+  }
+
+  .nav-link {
+    color: white;
+  }
+</style>
+
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <img src="assets/images/kansoa.png" alt="" class="navbar-brand" width="100px" height="70px" />
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="/accueilClient">Accueil</a></li>
+        <li class="nav-item"><a class="nav-link" href="#about">À propos</a></li>
+        <li class="nav-item"><a class="nav-link" (click)="openDemandeDevis()">Demande devis</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            Profil
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" (click)="voirProfil()">Voir Profil</a></li>
+            <li><a class="dropdown-item" href="/loginClient">Connecté</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" (click)="logout()">Déconnexion</a></li>
+          </ul>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<div class="modal fade" id="demandeDevisModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-custom">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Demande Devis</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form autocomplete="off">
+        <div class="modal-body">
+          <div class="mb-3">
+            <div class="row">
+              <div class="col-3">
+                <label for="dateEntree" class="form-label">Date demande</label>
+                <input type="datetime-local" id="dateEntree" name="dateEntree" [(ngModel)]="demandeDevis.dateDemande"
+                  class="form-control" disabled />
+              </div>
+              <div class="col-3">
+                <label for="dateEntree" class="form-label">Votre voiture</label>
+                <select class="form-control" name="voiture" [(ngModel)]="demandeDevis.idVoitureClient">
+                  @for (voiture of listeVoitures; track voiture._id) {
+                  <option value="{{ voiture._id }}">{{ voiture.idMarque.marque }} {{ voiture.idModele.modele }}</option>
+                  }
+                </select>
+              </div>
+              <div class="col-3">
+                <label for="dateEntree" class="form-label">A domicile</label>
+                <select class="form-control" name="isDomicile" [(ngModel)]="idDomicile">
+                  <option value="0">Non</option>
+                  <option value="1">Oui</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="mb-3">
+            <div class="row">
+              <div class="col-5">
+                <label for="service" class="form-label">Service</label>
+                <input type="text" id="service" name="service" class="form-control" [(ngModel)]="service"
+                  (input)="rechercheAvecVerification()" />
+                <ul *ngIf="serviceSuggestions.length > 0" class="list-group mt-2">
+                  <li *ngFor="let service of serviceSuggestions" class="list-group-item"
+                    (click)="selectSuggestion(service)">
+                    {{ service.nomService }}
+                  </li>
+                </ul>
+              </div>
+              <div class="col-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" id="nombre" name="nombre" [(ngModel)]="nombre" class="form-control" />
+              </div>
+
+              <div class="col-3">
+                <label for="ajouterPiece" class="form-label">|</label>
+                <button (click)="ajouterService()" class="btn btn-primary form-control"
+                  [disabled]="!serviceSelectionnee">
+                  Plus
+                </button>
+              </div>
+            </div>
+          </div>
+
+
+          <table class="table mt-3" *ngIf="serviceAjoutees.length > 0">
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th>Nombre</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of serviceAjoutees; let i = index">
+                <td>{{ item.service }}</td>
+                <td>{{ item.nombre }}</td>
+                <td>
+                  <button class="btn btn-danger" (click)="supprimerService(i)">Supprimer</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+            (click)="addDemandeDevis()">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="demandeEnvoye" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-custom">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmation de réception</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form autocomplete="off">
+        <div class="modal-body">
+          <div class="mb-3">
+            <p>Votre demande a été envoyée avec succès✅. Nous reviendrons vers vous avec un retour dès que notre manager
+              aura analysé votre demande de devis 😊.
+
+              Notre équipe est à votre disposition tous les jours de 8h à 17h.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="demandeConnexion" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-custom">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Attention ⚠️</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form autocomplete="off">
+        <div class="modal-body">
+          <div class="mb-3">
+            <p>Veuillez d'abord vous connectez avant tout.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

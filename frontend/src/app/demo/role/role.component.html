@@ -1,0 +1,84 @@
+
+<div class="row">
+  <div class="col-sm-12">
+    <app-card cardTitle="Role employe">
+      <form (submit)="addRole()">
+        <div class="row">
+          <div class="col-4">
+            <input type="text" class="form-control" [(ngModel)]="newRole.nomRole" name="nomRole" placeholder="Nom role" required>
+          </div>
+          <div class="col-4">
+            <button class="btn btn-primary">Ajouter</button>
+          </div>
+        </div>
+      </form>
+
+      <table class="table table-striped table-hover mt-3">
+        <thead>
+          <tr>
+            <th>Role employe</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let role of roles">
+            <td>{{ role.nomRole }}</td>
+            <td>
+              <button class="btn btn-warning btn-sm" (click)="openUpdateModal(role)">Modifier</button>
+              <button class="btn btn-danger btn-sm" (click)="openDeleteModal(role)">Supprimer</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </app-card>
+  </div>
+</div>
+
+<!-- Modal de modification -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modification role</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form #editForm="ngForm">
+          <div class="mb-3">
+            <label for="role" class="form-label">Nom role</label>
+            <input type="text" [(ngModel)]="selectedRole.nomRole" name="nomRole" class="form-control" required />
+
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="confirmUpdateRole()" data-bs-dismiss="modal">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Suppression role</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form #editForm="ngForm">
+          <div class="mb-3">
+            <label for="categorie" class="form-label">Voulez-vous vraiment supprimer le role{{ selectedRole.nomRole}}?</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="confirmDeleteRole()" data-bs-dismiss="modal">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

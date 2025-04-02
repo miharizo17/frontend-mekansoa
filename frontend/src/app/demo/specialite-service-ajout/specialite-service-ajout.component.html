@@ -1,0 +1,68 @@
+<div class="row">
+  <div class="col-sm-12">
+    <app-card cardTitle="Ajout de spécialité(s) par service(s)">
+      <form>
+        <!-- Sélection du Service -->
+        <div class="row">
+          <div class="col-4">
+            <label>Service</label>
+            <select class="form-control" [(ngModel)]="newSpecialiteService.idService" name="idService" required>
+              <option disabled selected>Choisissez un service</option>
+              <option *ngFor="let service of services" [value]="service._id">
+                {{service.nomService}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Inputs dynamiques des spécialités -->
+        <div class="row mt-3" *ngFor="let spec of specialitesAjoutes; let i = index">
+          <div class="col-4">
+            <label>Spécialité {{ i + 1 }}</label>
+            <select class="form-control" [(ngModel)]="specialitesAjoutes[i].idSpecialite" name="idSpecialite{{i}}" required>
+              <option disabled selected>Choisissez une spécialité</option>
+              <option *ngFor="let specialite of specialites" [value]="specialite._id">
+                {{specialite.nomSpecialite}}
+              </option>
+            </select>
+          </div>
+
+          <!-- Bouton pour supprimer une spécialité -->
+          <div class="col-1 d-flex align-items-end">
+            <button class="btn btn-danger" type="button" (click)="removeSpecialite(i)" *ngIf="specialitesAjoutes.length > 1">
+              ✖
+            </button>
+          </div>
+        </div>
+
+        <!-- Bouton pour ajouter une nouvelle spécialité -->
+        <div class="row mt-2">
+          <div class="col-4">
+            <button class="btn btn-primary" type="button" (click)="addSpecialite()">Plus +</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="addSpecialiteService()">Enregistrer</button>
+      </form>
+    </app-card>
+  </div>
+</div>
+
+<!-- Modal de confirmation -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmation ajout</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form #editForm="ngForm">
+          <div class="mb-3">
+            <label for="annee" class="form-label">Spécialité(s) ajoutée(s) avec succes.</label>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+

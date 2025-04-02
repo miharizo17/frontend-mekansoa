@@ -1,0 +1,33 @@
+<div class="ms-auto">
+  <ul class="list-unstyled">
+
+    <li>
+      <div class="dropdown pc-h-item header-user-profile" ngbDropdown>
+        <a
+          class="pc-head-link head-link-primary dropdown-toggle arrow-none me-0"
+          data-bs-toggle="dropdown"
+          href="javascript:"
+          ngbDropdownToggle
+        >
+          <img src="assets/images/user/avatar-2.jpg" alt="user-image" class="user-avtar" />
+
+        </a>
+        <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown" ngbDropdownMenu>
+          <div class="dropdown-header">
+            <ng-scrollbar style="height: 100px;" visibility="hover">
+
+              <a href="/profilClient" class="dropdown-item">
+                <i class="ti ti-settings"></i>
+                <span>Profile</span>
+              </a>
+              <a  (click)="logout()" class="dropdown-item">
+                <i class="ti ti-logout"></i>
+                <span>Deconnexion</span>
+              </a>
+            </ng-scrollbar>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

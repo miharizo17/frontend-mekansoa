@@ -1,0 +1,84 @@
+<app-header-profil></app-header-profil>
+
+<!-- Hero Section -->
+<header class="hero">
+  <div class="container">
+    <h1>Bienvenue chez Men-Kan'Soa </h1>
+    <p>Votre véhicule, notre passion, votre satisfaction.</p>
+  </div>
+</header>
+
+<!-- About Section -->
+<section id="about" class="container text-center py-5">
+  <h2>À propos de nous</h2>
+  <p>Nous sommes un garage professionnel offrant des services de qualité pour votre voiture.</p>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="container py-5">
+  <h2 class="text-center">Nos categories de services</h2>
+
+  <div class="row mt-4">
+    <div class="col-md-4" *ngFor="let categorie of visibleCategorie; let i = index">
+      <div class="card service-card animate__animated animate__fadeIn"
+        style="width: 300px; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: white; text-align: center; padding: 20px; position: relative;">
+
+        <div style="position: relative; display: flex; justify-content: center; align-items: center;">
+          <img [src]="'data:image/jpeg;base64,' + categorie.imageCategorie" alt="Photo de l'étudiant"
+            style="width: 200px; height: 200px; object-fit: cover; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+        </div>
+
+        <div class="card-body">
+          <h5 class="card-title" style="font-size: 1.3rem; color: #333; margin-top: 15px;">{{ categorie.nomCategorie }}
+          </h5>
+          <p class="card-text" style="color: #777;">{{categorie.description}}</p>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="d-flex justify-content-between mt-4">
+    <button class="btn btn-primary" (click)="prev()" [disabled]="currentIndex === 0"><</button>
+
+    <button class="btn btn-primary" (click)="next()"
+      [disabled]="currentIndex + categoriesPerPage >= categories.length">></button>
+  </div>
+</section>
+
+
+<!-- Services a domicile Section -->
+<section id="services" class="container py-5">
+  <h2 class="text-center">Nos services a domicile</h2>
+
+  <div class="row mt-4">
+    <div class="col-md-4" *ngFor="let service of visibleServiceDmicile; let i = index">
+      <div class="card service-card animate__animated animate__fadeIn"
+        style="width: 300px; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: white; text-align: center; padding: 20px; position: relative;">
+
+
+        <div class="card-body">
+          <h5 class="card-title" style="font-size: 1.3rem; color: #333; margin-top: 15px;">{{ service.idCategorie.nomCategorie }}
+          </h5>
+          <p class="card-text" style="color: #777;">{{service.nomService}}</p>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="d-flex justify-content-between mt-4">
+    <button class="btn btn-primary" (click)="prevServiceDomicile()" [disabled]="currentIndexService === 0"><</button>
+
+    <button class="btn btn-primary" (click)="nextServiceDomicile()"
+      [disabled]="currentIndexService + servicesDomicilePerPage >= serviceDomicile.length">></button>
+  </div>
+</section>
+
+
+
+<app-footer-profil></app-footer-profil>

@@ -1,0 +1,16 @@
+<div class="container mt-4">
+  <h2>Détails de l'employé</h2>
+  <div class="card">
+    <div class="card-body">
+      <p><strong>Nom :</strong> {{ employe.nom }}</p>
+      <p><strong>Rôle :</strong> {{ employe.idRole?.nomRole }}</p>
+      <p><strong>Email :</strong> {{ employe.email }}</p>
+      <p><strong>Téléphone :</strong> {{ employe.telephone }}</p>
+      <p><strong>Date de Naissance :</strong> {{ employe.dateNaissance }}</p>
+      <p><strong>Adresse :</strong> {{ employe.adresse }}</p>
+      <p><strong>Salaire Brut :</strong> {{ employe.salaireBrut }}</p>
+      <p><strong>Salaire Net :</strong> {{ employe.salaireNet }}</p>
+      <button class="btn btn-primary" routerLink="/employe">Retour</button>
+    </div>
+  </div>
+</div>

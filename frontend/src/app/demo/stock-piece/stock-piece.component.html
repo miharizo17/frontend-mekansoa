@@ -1,0 +1,29 @@
+<div class="row">
+  <div class="col-sm-12">
+    <app-card cardTitle="Stock piece">
+
+      <table class="table table-striped table-hover mt-3">
+        <thead>
+          <tr>
+            <th>Piece(Reference)</th>
+            <th>Quantite</th>
+            <th>Prix unitaire(Ar)</th>
+            <th>Marge beneficiaire(%)</th>
+            <th>Prix total(Ar)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let stock of listeStock; let i = index">
+            <td>{{ stock.idPiece.nomPiece }}({{ stock.idPiece.referencePiece }})</td>
+            <td>{{ stock.qte }}</td>
+            <td>{{ stock.prixUnitaire }}</td>
+            <td>{{ stock.margeBeneficiaire }}</td>
+            <td>{{ stock.prixTotal }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </app-card>
+  </div>
+</div>
+
+

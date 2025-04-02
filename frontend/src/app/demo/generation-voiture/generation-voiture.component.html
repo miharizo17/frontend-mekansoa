@@ -1,0 +1,94 @@
+
+<div class="row">
+  <div class="col-sm-12">
+    <app-card cardTitle="Génération voiture">
+      <form (submit)="addGeneration()">
+        <div class="row">
+          <div class="col-4">
+            <input type="text" class="form-control" [(ngModel)]="newGeneration.generation" name="generation" placeholder="Génération" required>
+          </div>
+          <div class="col-4">
+            <input type="text" class="form-control" [(ngModel)]="newGeneration.note" name="note" placeholder="Note" required>
+          </div>
+          <div class="col-4">
+            <button class="btn btn-primary">Ajouter</button>
+          </div>
+        </div>
+      </form>
+
+      <table class="table table-striped table-hover mt-3">
+        <thead>
+          <tr>
+            <th>Génération</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let generation of generations">
+            <td [style.background-color]="generation.note === '5' ? 'aquamarine' : 'beige'">{{ generation.generation }}</td>
+            <td>{{ generation.note }}</td>
+            <td>
+              <button class="btn btn-warning btn-sm" (click)="openUpdateModal(generation)">Modifier</button>
+              <button class="btn btn-danger btn-sm" (click)="openDeleteModal(generation)">Supprimer</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </app-card>
+  </div>
+</div>
+
+<!-- Modal de modification -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modification génération</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form #editForm="ngForm">
+          <div class="mb-3">
+            <label for="generation" class="form-label">Génération</label>
+            <input type="text" [(ngModel)]="selectedGeneration.generation" name="generation" class="form-control" required />
+
+          </div>
+          <div class="mb-3">
+            <label for="generation" class="form-label">Note</label>
+            <input type="number" [(ngModel)]="selectedGeneration.note" name="note" class="form-control" required />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="confirmUpdateGeneration()" data-bs-dismiss="modal">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Suppression génération
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form #editForm="ngForm">
+          <div class="mb-3">
+            <label for="generation" class="form-label">Voulez-vous vraiment supprimer la génération {{ selectedGeneration.generation}}?</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="confirmDeleteGeneration()" data-bs-dismiss="modal">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+<!-- <div class="container">
+  <h2>Historique des Prix des Services</h2>
+
+  <!-- Champ de recherche -->
+  <input type="text" placeholder="Rechercher..." (input)="updateFilter($event)" class="form-control mb-3">
+
+  <!-- Tableau des données -->
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Nom du Service</th>
+        <th>Prix</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let historique of getPaginatedData()">
+        <td>{{ historique.date }}</td>
+        <td>{{ historique.idService?.nomService || 'Non défini' }}</td>
+        <td>{{ historique.prix }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <nav>
+    <ul class="pagination">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <button class="page-link" (click)="changePage(currentPage - 1)">Précédent</button>
+      </li>
+
+      <li class="page-item" *ngFor="let page of getPages()" [class.active]="currentPage === page">
+        <button class="page-link" (click)="changePage(page)">{{ page }}</button>
+      </li>
+
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <button class="page-link" (click)="changePage(currentPage + 1)">Suivant</button>
+      </li>
+    </ul>
+  </nav>

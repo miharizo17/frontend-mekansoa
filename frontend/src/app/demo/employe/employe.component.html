@@ -1,0 +1,207 @@
+<div class="row">
+  <div class="col-sm-12">
+    <app-card cardTitle="Employe">
+      <div class="d-flex justify-content-between align-items-center">
+        <h6 class="m-0" style="color: transparent;">a</h6>
+        <button class="btn btn-primary" (click)="openAddModal()">Ajout</button>
+      </div>
+
+      <table class="table table-striped table-hover mt-3">
+        <thead>
+          <tr>
+            <th border="1">Date entree</th>
+            <th border="1">Nom</th>
+            <th border="1">Role</th>
+            <th border="1">Date de naissance</th>
+            <th border="1">Email</th>
+            <th border="1">Telephone</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let employe of employes">
+            <td>{{ employe.dateEntree }}</td>
+            <td>{{ employe.nom }}</td>
+            <td>{{ employe.idRole.nomRole }}</td>
+            <td>{{ employe.dateNaissance }}</td>
+            <td>{{ employe.email }}</td>
+            <td>{{ employe.telephone }}</td>
+            <td>
+              <a [routerLink]="['/employe', employe._id]">Voir détails</a>
+              <button class="btn btn-warning mr-3" (click)="openUpdateModal(employe)">Modifier</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="connecte === 1">
+        <p style="color: red;">Votre session a expiré. Veuillez vous reconnecter.</p>
+      </div>
+    </app-card>
+  </div>
+</div>
+
+
+<!-- Modal d'ajout -->
+<div class="modal fade" id="ajoutModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-custom">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Ajout employe</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form autocomplete="off">
+        <div class="modal-body">
+          <form #addEmployeForm="ngForm">
+          <div class="mb-3">
+            <label for="dateEntree" class="form-label">Date entree</label>
+            <input type="date" class="form-control" [(ngModel)]="newEmploye.dateEntree" name="dateEntree" required>
+          </div>
+          <div class="mb-3">
+            <label for="nom" class="form-label">Nom</label>
+            <input type="text" class="form-control" [(ngModel)]="newEmploye.nom" name="nom" required>
+          </div>
+          <div class="mb-3">
+            <label for="dateNaissance" class="form-label">Date de naissance</label>
+            <input type="date" class="form-control" [(ngModel)]="newEmploye.dateNaissance" name="dateNaissance" required>
+          </div>
+          <div class="mb-3">
+            <label for="cin" class="form-label">CIN</label>
+            <input type="text" class="form-control" [(ngModel)]="newEmploye.cin" name="cin" required>
+          </div>
+          <div class="mb-3">
+            <label for="sexe" class="form-label">Sexe</label>
+            <select class="form-control" [(ngModel)]="newEmploye.sexe" name="sexe" required>
+              <option value="Homme">Homme</option>
+              <option value="Femme">Femme</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="telephone" class="form-label">Téléphone</label>
+            <input type="text" class="form-control" [(ngModel)]="newEmploye.telephone" name="telephone" required>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" [(ngModel)]="newEmploye.email" name="email" required>
+          </div>
+          <div class="mb-3">
+            <label for="adresse" class="form-label">Adresse</label>
+            <input type="text" class="form-control" [(ngModel)]="newEmploye.adresse" name="adresse" required>
+          </div>
+          <div class="mb-3">
+            <label for="salaireBrut" class="form-label">Salaire Brut</label>
+            <input type="number" class="form-control" [(ngModel)]="newEmploye.salaireBrut" name="salaireBrut" required>
+          </div>
+          <div class="mb-3">
+            <label for="salaireNet" class="form-label">Salaire Net</label>
+            <input type="number" class="form-control" [(ngModel)]="newEmploye.salaireNet" name="salaireNet" required>
+          </div>
+          <div class="mb-3">
+            <label for="mdp" class="form-label">Mot de passe</label>
+            <input type="password" class="form-control" [(ngModel)]="newEmploye.mdp" name="mdp" required>
+          </div>
+          <div class="mb-3">
+            <label for="idRole" class="form-label">Rôle</label>
+            <select class="form-control" [(ngModel)]="newEmploye.idRole" name="idRole" required>
+              <option *ngFor="let role of roles" [value]="role._id">{{ role.nomRole }}</option>
+            </select>
+          </div>
+        </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="addEmploye()">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal de modification -->
+<!-- Modal de modification d'un employé -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modification employe</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form #editForm="ngForm">
+          <div class="mb-3">
+            <label class="form-label">Date d'entrée</label>
+            <input type="date" class="form-control" [(ngModel)]="selectedEmploye.dateEntree" name="dateEntree" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Rôle</label>
+            <select class="form-control" [(ngModel)]="selectedEmploye.idRole" name="idRole" required>
+              <option *ngFor="let role of roles" [value]="role._id">{{ role.nomRole }}</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Nom</label>
+            <input type="text" class="form-control" [(ngModel)]="selectedEmploye.nom" name="nom" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Date de naissance</label>
+            <input type="date" class="form-control" [(ngModel)]="selectedEmploye.dateNaissance" name="dateNaissance" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">CIN</label>
+            <input type="text" class="form-control" [(ngModel)]="selectedEmploye.cin" name="cin" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Sexe</label>
+            <select class="form-control" [(ngModel)]="selectedEmploye.sexe" name="sexe" required>
+              <option value="Homme">Homme</option>
+              <option value="Femme">Femme</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Téléphone</label>
+            <input type="text" class="form-control" [(ngModel)]="selectedEmploye.telephone" name="telephone" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" [(ngModel)]="selectedEmploye.email" name="email" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Photo</label>
+            <input type="text" class="form-control" [(ngModel)]="selectedEmploye.photo" name="photo" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Adresse</label>
+            <input type="text" class="form-control" [(ngModel)]="selectedEmploye.adresse" name="adresse" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Salaire Brut</label>
+            <input type="number" class="form-control" [(ngModel)]="selectedEmploye.salaireBrut" name="salaireBrut" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Salaire Net</label>
+            <input type="number" class="form-control" [(ngModel)]="selectedEmploye.salaireNet" name="salaireNet" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Mot de passe</label>
+            <input type="password" class="form-control" [(ngModel)]="selectedEmploye.mdp" name="mdp" required />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="updateEmploye()" data-bs-dismiss="modal">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>

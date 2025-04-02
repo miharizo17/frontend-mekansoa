@@ -1,0 +1,122 @@
+
+<div class="row">
+  <div class="col-sm-12">
+    <app-card cardTitle="Service">
+      <form (submit)="addService()" autocomplete="off">
+        <div class="row">
+          <div class="col-3">
+            <label>Categorie</label>
+            <select class="form-control" [(ngModel)]="newService.idCategorie" name="idCategorie" required>
+              <option disabled>Catégorie</option>
+              <option *ngFor="let categorie of categories" [value]="categorie._id">
+                {{categorie.nomCategorie}}
+              </option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label>Nom service</label>
+            <input type="text" class="form-control" [(ngModel)]="newService.nomService" name="nomService"  required>
+          </div>
+          <div class="col-3">
+            <label>Prix de base</label>
+            <input type="number" class="form-control" [(ngModel)]="newService.prixBase" name="prixBase"  required>
+          </div>
+          <div class="col-3">
+            <label>A domicile </label>
+            <select class="form-control" [(ngModel)]="newService.isDomicile" name="isDomicile" required>
+              <option value="0">Non</option>
+              <option value="1">Oui</option>
+            </select>
+          </div>
+          <div class="col-3 mt-2">
+            <button class="btn btn-primary">Ajouter</button>
+          </div>
+        </div>
+      </form>
+
+      <table class="table table-striped table-hover mt-3">
+        <thead>
+          <tr>
+            <th>Catégorie</th>
+            <th>Service</th>
+            <th>Prix base</th>
+            <th>A domicile</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let service of services">
+            <td>{{ service.idCategorie.nomCategorie }}</td>
+            <td>{{ service.nomService }}</td>
+            <td>{{ service.prixBase }}</td>
+            <td>{{ service.isDomicile === 0 ? 'Non' : 'Oui' }}</td>
+            <td>
+              <button class="btn btn-warning btn-sm" (click)="openUpdateModal(service)">Modifier</button>
+              <button class="btn btn-danger btn-sm" (click)="openDeleteModal(service)">Supprimer</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </app-card>
+  </div>
+</div>
+
+<!-- Modal de modification -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modification service</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form #editForm="ngForm">
+          <div class="mb-3">
+            <label for="Service" class="form-label">Catégorie</label>
+            <select class="form-control" [(ngModel)]="selectedService.idCategorie" name="idCategorie" placeholder="Categorie service" required>
+              <option *ngFor="let categorie of categories" [value]="categorie._id">
+                {{categorie.nomCategorie}}
+              </option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="Service" class="form-label">Nom service</label>
+            <input type="text" [(ngModel)]="selectedService.nomService" name="nomService" class="form-control" required />
+          </div>
+          <div class="mb-3">
+            <label for="Service" class="form-label">Prix de base</label>
+            <input type="number" [(ngModel)]="selectedService.prixBase" name="prixBase" class="form-control" required />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="confirmUpdateService()" data-bs-dismiss="modal">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Suppression service</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form #editForm="ngForm">
+          <div class="mb-3">
+            <label for="categorie" class="form-label">Voulez-vous vraiment supprimer le service {{ selectedService.nomService}}?</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" (click)="confirmDeleteService()" data-bs-dismiss="modal">Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

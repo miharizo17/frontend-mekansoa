@@ -1,0 +1,40 @@
+
+<div class="row">
+  <div class="col-sm-12">
+    <app-card cardTitle="Liste demande devis">
+
+
+    <table class="table table-striped table-hover mt-3">
+        <thead>
+          <tr>
+            <th border="1">Id</th>
+            <th border="1">Date demande</th>
+            <th border="1">Numero devis</th>
+            <th border="1">Client</th>
+            <th border="1">Modele</th>
+            <th border="1">Marque</th>
+            <th border="1">Numero serie</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let demande of listeDemandeDevis; let i = index">
+            <td>{{ demande._id }}</td>
+            <td>{{  getFormattedDate(demande.dateDemandeDevis) }}</td>
+            <td>DEVIS_{{ getFormattedDate(demande.dateDemandeDevis) }}_{{ demande.idVoitureClient.idClient.nom | slice:0:3}}</td>
+            <td>{{ demande.idVoitureClient.idClient.nom }}</td>
+            <td>{{ demande.idVoitureClient.idModele.modele }}</td>
+            <td>{{ demande.idVoitureClient.idMarque.marque }}</td>
+            <td>{{ demande.idVoitureClient.numeroService }}</td>
+            <td><button class="btn btn-warning mr-3" [routerLink]="['/detailDemandeDevis', demande._id]">Creation devis</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </app-card>
+  </div>
+</div>
+
+
+
+
+
+
