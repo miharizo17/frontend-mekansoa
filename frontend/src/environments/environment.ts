@@ -7,7 +7,8 @@ import packageInfo from '../../package.json';
 export const environment = {
   appVersion: packageInfo.version,
   production: false,
-  apiUrl: 'https://m1p12mean-kanto-soatiana-2.onrender.com' // URL pour le développement
+  // apiUrl: 'https://m1p12mean-kanto-soatiana-2.onrender.com' // URL pour le développement
+  apiiUrl: 'https://mekansoa-backend.onrender.com/'
 };
 
 /*
