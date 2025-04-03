@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
@@ -10,6 +10,7 @@ import { environment } from 'src/environments/environment';
 export class LoginClientService{
 
   private apiUrl = `${environment.apiUrl}/client`;
+  private apiUrlAuth = `${environment.apiUrl}/auth/checkToken`;
 
 
   constructor(private http: HttpClient, private router : Router) {}
@@ -46,28 +47,25 @@ export class LoginClientService{
 
   verifyToken(): Observable<number> {
     const token = localStorage.getItem('token');
+    
     if (!token) {
-      return throwError(() => new Error('Aucun token disponible.'));
+        return of(1); 
     }
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    
+    return this.http.get(this.apiUrlAuth, { headers, observe: 'response' }).pipe(
+        map((response) => {
+            console.log("Responseeeee :", response);
+            return 0; 
+        }),
+        catchError((error: HttpErrorResponse) => {
+            console.error('Erreur de vérification du token:', error);           
+            localStorage.removeItem('token');
+            this.router.navigate(['/loginClient']);
+            return of(1); 
 
-    return this.http.get(this.apiUrl, { headers, observe: 'response' }).pipe(
-      map(response => {
-        console.log("Headers de la réponse:", response.headers.keys()); // Debug: voir tous les headers
-        const connecteHeader = response.headers.get('X-Connecte');
-        console.log('X-Connecte Header:', connecteHeader);
-
-        return connecteHeader !== null ? parseInt(connecteHeader, 10) : 1;
-      }),
-      catchError((error) => {
-        console.error('Erreur de vérification du token:', error);
-        localStorage.removeItem('token');
-        this.router.navigate(['/loginClient']);
-        return of(1);
-      })
+        })
     );
-  }
-
-
+}
 }

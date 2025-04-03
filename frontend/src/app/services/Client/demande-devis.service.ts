@@ -12,6 +12,7 @@ export class DemandeDevisService {
   private apiUrlPieceDemandeDevisById = `${environment.apiUrl}/demandeDevis/ajoutPieceDemandeDevis`;
   private apiUrlEnvoieMail = `${environment.apiUrl}/demandeDevis/envoieDemandeDevis`;
   private headers = new HttpHeaders().set('Authorization', `Bearer ${localStorage.getItem('token')}`);
+  private apiUrlFiltre = `${environment.apiUrl}/demandeDevis/filtreDemandeDevis`;
   constructor(private http: HttpClient) { }
 
   getDemandeDevis(): Observable<any> {
@@ -34,5 +35,10 @@ export class DemandeDevisService {
 
   envoieMail(body: FormData): Observable<any> {
     return this.http.post(this.apiUrlEnvoieMail, body, { headers: this.headers });
+  }
+
+  filtreDemande(dateDebut: any, dateFin: any, numeroDev: any): Observable<any> {
+    const body = {dateDebut,dateFin, numeroDev};
+    return this.http.post(this.apiUrlFiltre, body);
   }
 }

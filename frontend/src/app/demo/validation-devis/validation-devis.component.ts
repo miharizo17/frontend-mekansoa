@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CardComponent } from "../../theme/shared/components/card/card.component";
 import { DemandeDevisService } from 'src/app/services/Client/demande-devis.service';
 import { DetailDemandeDevisService } from 'src/app/services/Client/detail-demande-devis.service';
@@ -9,6 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { SpecialiteServiceService } from 'src/app/services/Manager/specialite-service.service';
 import { SpecialiteEmployeService } from 'src/app/services/Manager/specialite-employe.service';
 import { PlanningEmployeService } from 'src/app/services/Mecanicien/planning-employe.service';
+declare let bootstrap: any;
 interface ServiceData {
   _id: string;
   idService: { _id: string; nomService: string };
@@ -26,7 +27,8 @@ interface GroupedService {
   imports: [CardComponent,
     FormsModule,
     CommonModule,
-    HttpClientModule
+    HttpClientModule,
+    RouterModule
   ],
   templateUrl: './validation-devis.component.html',
   styleUrl: './validation-devis.component.scss',
@@ -50,17 +52,49 @@ export class ValidationDevisComponent {
   listeSpecialiteService: ServiceData[] = [];
   groupedServices: GroupedService[] = [];
   listeEmployeSpecialite: any[] = [];
-
+  dateHeureActuelle: string = '';
   ngOnInit(): void {
     this.idDemande = (this.route.snapshot.paramMap.get('idDemandeDevis'));
+    this.loadDemandeDevis();
     this.loadDetailDemandeDevis();
+    this.route.queryParams.subscribe(params => {
+      this.dateHeureActuelle = params['date'] || '';
+    });
+    console.log("dateHeureActuellesss ", this.dateHeureActuelle);
+
 
   }
 
   listeDemandedevis: any[] = [];
+  heureFini: string = '';
+  minuteFini: string = '';
+  dateFinale: string = '';
   loadDemandeDevis(): void {
     this.demandeDevisService.getDemandeDevisById(this.idDemande).subscribe(data => {
       this.listeDemandedevis = data;
+      this.heureFini = String(this.listeDemandedevis[0]?.heureFini).padStart(2, '0');
+      this.minuteFini = String(this.listeDemandedevis[0]?.minuteFini).padStart(2, '0');
+      let dateActuelle = new Date(this.dateHeureActuelle);
+      let heuresAjoutees = Number(this.listeDemandedevis[0]?.heureFini) || 0;
+      let minutesAjoutees = Number(this.listeDemandedevis[0]?.minuteFini) || 0;
+
+      // Ajouter heures et minutes en UTC
+      dateActuelle.setUTCHours(dateActuelle.getUTCHours() + heuresAjoutees);
+      dateActuelle.setUTCMinutes(dateActuelle.getUTCMinutes() + minutesAjoutees);
+
+      // Formater en UTC pour éviter les décalages
+      let options: Intl.DateTimeFormatOptions = {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', hour12: false,
+        timeZone: 'UTC' // Force l'affichage en UTC
+      };
+
+      this.dateFinale = new Intl.DateTimeFormat('fr-FR', options).format(dateActuelle);
+
+
+      console.log("Date après addition :", this.dateFinale);
+
+
     });
   }
 
@@ -69,15 +103,14 @@ export class ValidationDevisComponent {
       this.listeService = data;
       this.specialiteServiceService.getSpecialiteByService(this.listeService).subscribe(data => {
         this.listeSpecialiteService = data;
-        console.log(this.listeSpecialiteService);
         this.groupData();
       });
     });
   }
 
   listeEmployeGroupee: any[] = [];
-  listeEmployeDispo: any[]=[];
-  listeEmployeAffecte:any[]=[];
+  listeEmployeDispo: any[] = [];
+  listeEmployeAffecte: any[] = [];
   groupData(): void {
     const serviceMap = new Map<string, GroupedService>();
 
@@ -111,23 +144,47 @@ export class ValidationDevisComponent {
             specialites: []
           });
         }
-
         employeMap.get(employeId)!.specialites.push(specialiteNom);
       });
 
-      // Convertir la Map en un tableau
       this.listeEmployeGroupee = Array.from(employeMap.values());
-      console.log('tttuuuu');
-      console.log(this.listeEmployeGroupee);
-      this.planningEmployeService.listePlaningSuperieurDate("2025-04-01T10:00:00Z",this.listeEmployeGroupee).subscribe(data => {
-        console.log("Employe affectee: ", data.employesAffectes);
+      this.planningEmployeService.listePlaningSuperieurDate(this.dateHeureActuelle, this.listeEmployeGroupee).subscribe(data => {
         this.listeEmployeDispo = data.employesDisponibles;
-        this.listeEmployeAffecte = data.employesAffectes;
-        console.log("jjjjjjeeeee");
-        console.log(this.listeEmployeDispo);
+        this.listeEmployeAffecte = data.employeUniqueDansPlanning;
       });
     });
   }
+
+
+
+  getSpecialitesAsString(service: GroupedService): string {
+    return service.specialites.map(s => s.nomSpecialite).join(', ');
+  }
+
+  employesSelectionnes: any[] = [];
+  toggleSelection(employe: any, event: Event) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+
+    if (isChecked) {
+      this.employesSelectionnes.push(employe);
+    } else {
+      this.employesSelectionnes = this.employesSelectionnes.filter(e => e.nom !== employe.nom);
+    }
+  }
+
+
+  ajoutPlanningEmploye(): void {
+    this.planningEmployeService.ajoutPlanningEmploye(this.dateHeureActuelle, this.dateFinale, this.listeDemandedevis[0]?._id, this.employesSelectionnes).subscribe(() => {
+      const modalElement = document.getElementById('confirmationAssignement');
+      if (modalElement) {
+        const modalInstance = new bootstrap.Modal(modalElement);
+        modalInstance.show();
+      }
+      this.loadDemandeDevis();
+
+    });
+  }
+
 
 
 

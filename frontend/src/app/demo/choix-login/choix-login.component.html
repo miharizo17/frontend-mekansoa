@@ -1,0 +1,63 @@
+
+<!-- Hero Section -->
+<header class="hero">
+  <div class="container text-center">
+    <h1>Bienvenue chez Men-Kan'Soa</h1>
+    <p>Choisissez votre rôle pour vous connecter.</p>
+  </div>
+</header>
+
+<!-- Choix de Connexion Section -->
+<section id="choix-connexion" class="container py-5">
+  <h2 class="text-center">Qui êtes-vous ?</h2>
+  <div class="row mt-4 d-flex justify-content-center">
+    
+    <!-- Mécanicien Card -->
+    <div class="col-md-4">
+      <div class="card role-card animate__animated animate__fadeIn" [routerLink]="['/loginMecanicien']"
+        style="width: 300px; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: white; text-align: center; padding: 20px; cursor: pointer;">
+        
+        <div style="position: relative; display: flex; justify-content: center; align-items: center;">
+          <img src="assets/images/mecanicien.png" alt="Mécanicien" style="width: 200px; height: 200px; object-fit: cover; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+        </div>
+        
+        <div class="card-body">
+          <h5 class="card-title" style="font-size: 1.3rem; color: #333; margin-top: 15px;">Mécanicien</h5>
+        </div>
+      </div>
+    </div>
+
+    <!-- Client Card -->
+    <div class="col-md-4">
+      <div class="card role-card animate__animated animate__fadeIn" [routerLink]="['/loginClient']"
+        style="width: 300px; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: white; text-align: center; padding: 20px; cursor: pointer;">
+        
+        <div style="position: relative; display: flex; justify-content: center; align-items: center;">
+          <img src="assets/images/manager.png" alt="Client" style="width: 200px; height: 200px; object-fit: cover; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+        </div>
+        
+        <div class="card-body">
+          <h5 class="card-title" style="font-size: 1.3rem; color: #333; margin-top: 15px;">Client</h5>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manager Card -->
+    <div class="col-md-4">
+      <div class="card role-card animate__animated animate__fadeIn" [routerLink]="['/loginManager']"
+        style="width: 300px; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: white; text-align: center; padding: 20px; cursor: pointer;">
+        
+        <div style="position: relative; display: flex; justify-content: center; align-items: center;">
+          <img src="assets/images/manager.png" alt="Manager" style="width: 200px; height: 200px; object-fit: cover; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+        </div>
+        
+        <div class="card-body">
+          <h5 class="card-title" style="font-size: 1.3rem; color: #333; margin-top: 15px;">Manager</h5>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</section>
+
+<app-footer-profil></app-footer-profil>

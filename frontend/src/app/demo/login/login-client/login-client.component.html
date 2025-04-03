@@ -1,0 +1,52 @@
+<div class="auth-main">
+  <div class="auth-wrapper v3">
+    <div class="auth-form">
+      <div class="card my-5">
+        <div class="card-body">
+          <a href="#" class="d-flex justify-content-center">
+            <img src="assets/images/kansoa.png" alt="" class="logo logo-lg" width="200px" height="150px"/>
+          </a>
+          <div class="row">
+            <div class="d-flex justify-content-center">
+              <div class="auth-header">
+                <h2 class="text-secondary mt-5"><b>Bienvenue sur Me-kan'soa</b></h2>
+                <p class="fs-4 mt-2">Veuillez vous identifier entant que client.</p>
+                <!-- <div *ngIf="connecte"> -->
+                  <span *ngIf="connecte === 1" class="alert alert-danger">Votre session a expiré. Veuillez vous reconnecter.</span>
+                  <!-- <p style="color: red;">Votre session a expiré. Veuillez vous reconnecter.</p> -->
+                <!-- </div> -->
+                <br>
+              </div>
+            </div>
+          </div>
+          <div class="d-grid">
+
+          </div>
+          <div class="saprator mt-3">
+
+          </div>
+          <!-- <h5 class="my-4 d-flex justify-content-center">Sign in with Email address</h5> -->
+          <form (ngSubmit)="login()">
+            <div class="form-floating mb-3">
+              <input type="email" class="form-control" id="floatingInput" [(ngModel)]="email" id="email" name="email" />
+              <label for="floatingInput">Email</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="password" class="form-control" [(ngModel)]="mdp" id="mdp" name="mdp" />
+              <label for="password">Mot de passe</label>
+            </div>
+            <div class="d-grid mt-4">
+              <span *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</span>
+              <button class="btn btn-primary" type="submit">Se connecter</button>
+            </div>
+            <hr />
+            <p><a href="/accueilClient" class="text-center">Accueil</a></p>
+            <h5 class="d-flex justify-content-center">
+              <!-- <a [routerLink]="['/guest/register']">Don't have an account?</a> -->
+            </h5>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

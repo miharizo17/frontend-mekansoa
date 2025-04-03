@@ -64,7 +64,7 @@ export class LoginClientComponent {
         next: (response) => {
           localStorage.setItem('token', response.token);
           console.log('Client connecté: ', response.client);
-          localStorage.setItem('clientconnecte', JSON.stringify(response.client));
+          // localStorage.setItem('clientconnecte', JSON.stringify(response.client));
           this.router.navigate(['/accueilClient']);
         },
         error: (err) => {

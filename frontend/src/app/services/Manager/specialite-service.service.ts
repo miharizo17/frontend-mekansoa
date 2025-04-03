@@ -15,28 +15,28 @@ export class SpecialiteServiceService {
 
   // Liste by idService (Liste)
   getSpecialitesByIdService(idService: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${idService}`,{ headers: this.headers });
+    return this.http.get(`${this.apiUrl}/${idService}`, { headers: this.headers });
   }
 
   // Liste
   getAllSpecialiteService(): Observable<any>{
-    return this.http.get(this.apiUrl,{ headers: this.headers });
+    return this.http.get(this.apiUrl, { headers: this.headers });
   }
 
   // ajout
   addSpecialiteService(specialiteService: any): Observable<any>{
-    return this.http.post(this.apiUrl, specialiteService,{ headers: this.headers });
+    return this.http.post(this.apiUrl, specialiteService, { headers: this.headers });
   }
 
   // Delete by id de la table
   deleteSpecialiteService(id: string): Observable<any>{
     console.log("id specialiteService a supprimer :", id);
-    return this.http.delete(`${this.apiUrl}/${id}`,{ headers: this.headers });
+    return this.http.delete(`${this.apiUrl}/${id}`, { headers: this.headers });
   }
 
   // Update
   updateSpecialiteService(specialiteService: any): Observable<any>{
-    return this.http.put(`${this.apiUrl}/${specialiteService._id}`, specialiteService,{ headers: this.headers });
+    return this.http.put(`${this.apiUrl}/${specialiteService._id}`, specialiteService, { headers: this.headers });
   }
 
   private apiUrlByService = `${environment.apiUrl}/specialiteService/getSpecialiteByService`;

@@ -14,18 +14,18 @@ export class HttpService {
   }
 
   get<T>(url: string, options = {}): Observable<T> {
-    return this.http.get<T>(url, { ...options, headers: this.getHeaders() });
+    return this.http.get<T>(url, { ...options,   headers: this.headers });
   }
 
   post<T>(url: string, body: any, options = {}): Observable<T> {
-    return this.http.post<T>(url, body, { ...options, headers: this.getHeaders() });
+    return this.http.post<T>(url, body, { ...options,   headers: this.headers });
   }
 
   put<T>(url: string, body: any, options = {}): Observable<T> {
-    return this.http.put<T>(url, body, { ...options, headers: this.getHeaders() });
+    return this.http.put<T>(url, body, { ...options,   headers: this.headers });
   }
 
   delete<T>(url: string, options = {}): Observable<T> {
-    return this.http.delete<T>(url, { ...options, headers: this.getHeaders() });
+    return this.http.delete<T>(url, { ...options,   headers: this.headers });
   }
 }

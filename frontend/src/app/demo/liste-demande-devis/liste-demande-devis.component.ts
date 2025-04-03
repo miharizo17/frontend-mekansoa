@@ -42,4 +42,12 @@ export class ListeDemandeDevisComponent {
     });
   }
 
+  dateDebut: any;
+  dateFin: any;
+  numeroDev: any;
+  filtreDemandeDevis(): void {
+    this.demandeDevisService.filtreDemande(this.dateDebut,this.dateFin,this.numeroDev).subscribe(data => this.listeDemandeDevis = data);
+
+  }
+
 }

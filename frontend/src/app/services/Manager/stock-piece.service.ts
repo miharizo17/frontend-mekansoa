@@ -14,11 +14,11 @@ export class StockPieceService {
   constructor(private http: HttpClient) { }
 
     getStockPiece(): Observable<any> {
-      return this.http.get(this.apiUrl,{ headers: this.headers });
+      return this.http.get(this.apiUrl, { headers: this.headers });
     }
 
     getStockPieceByPiece(idPiece: string): Observable<any> {
-      return this.http.get(`${this.apiUrlStockByPiece}/${idPiece}`,{ headers: this.headers });
+      return this.http.get(`${this.apiUrlStockByPiece}/${idPiece}`, { headers: this.headers });
     }
 
 }

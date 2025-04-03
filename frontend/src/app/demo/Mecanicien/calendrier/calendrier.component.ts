@@ -5,36 +5,107 @@ import timeGridPlugin from '@fullcalendar/timegrid'; // Vue "Semaine/Jour avec h
 import interactionPlugin from '@fullcalendar/interaction'; // Pour interagir avec le calendrier
 import { CalendarOptions } from '@fullcalendar/core';
 import { CardComponent } from "../../../theme/shared/components/card/card.component";
+import { PlanningEmployeService } from 'src/app/services/Mecanicien/planning-employe.service';
+import { DemandeDevisService } from 'src/app/services/Client/demande-devis.service';
+import { DetailDemandeDevisService } from 'src/app/services/Client/detail-demande-devis.service';
 
 @Component({
   selector: 'app-calendrier',
   imports: [FullCalendarModule, CardComponent],
   templateUrl: './calendrier.component.html',
-  styleUrl: './calendrier.component.scss'
+  styleUrl: './calendrier.component.scss',
+  providers: [PlanningEmployeService, DemandeDevisService, DetailDemandeDevisService]
 })
 export class CalendrierComponent {
+
+  constructor(private planningService: PlanningEmployeService,
+    private demandeDevisService: DemandeDevisService,
+    private detailDemandeService: DetailDemandeDevisService
+  ) { }
+
+  idEmploye: string = "67e98d585720c299dfd41496";
+  planningAFaire: any[] = [];
+  planningenCours: any[] = [];
+  ngOnInit(): void {
+    this.loadPlanningAFaireEmploye(this.idEmploye);
+    this.loadPlanningEnCoursEmploye(this.idEmploye);
+  }
+
+  loadPlanningAFaireEmploye(employeId: string): void {
+    this.planningService.listePlaningByEmploye("0", employeId).subscribe(data => {
+      this.planningAFaire = data;
+
+      // Assurez-vous que la liste d'événements est bien initialisée
+      if (!Array.isArray(this.calendarOptions.events)) {
+        this.calendarOptions.events = [];
+      }
+
+      // Créez les nouveaux événements avec la couleur appropriée
+      const newEvents = this.planningAFaire.map(tache => ({
+        title: tache.numeroTache,
+        start: tache.dateDebut,
+        end: tache.deadline,
+        NumeroDevis: tache.idDevis.numeroDevis,
+        backgroundColor: 'green',
+        borderColor: '#0056b3'
+      }));
+
+      // Ajoutez les nouveaux événements à la liste existante
+      if (newEvents.length > 0) {
+        this.calendarOptions.events = [
+          ...this.calendarOptions.events,
+          ...newEvents
+        ];
+      }
+    });
+  }
+
+  loadPlanningEnCoursEmploye(employeId: string): void {
+    this.planningService.listePlaningByEmploye("1", employeId).subscribe(data => {
+      this.planningenCours = data;
+
+      // Assurez-vous que la liste d'événements est bien initialisée
+      if (!Array.isArray(this.calendarOptions.events)) {
+        this.calendarOptions.events = [];
+      }
+
+      // Créez les nouveaux événements avec la couleur appropriée
+      const newEvents = this.planningenCours.map(tache => ({
+        title: tache.numeroTache,
+        start: tache.dateDebut,
+        end: tache.deadline,
+        NumeroDevis: tache.idDevis.numeroDevis,
+        backgroundColor: 'red',
+        borderColor: '#563d7c'
+      }));
+
+      // Ajoutez les nouveaux événements à la liste existante
+      if (newEvents.length > 0) {
+        this.calendarOptions.events = [
+          ...this.calendarOptions.events,
+          ...newEvents
+        ];
+      }
+    });
+  }
+
+
+
   calendarOptions: CalendarOptions = {
-    initialView: 'timeGridWeek', // Vue par défaut : Semaine avec heures
-    plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin], // Ajoute les plugins nécessaires
+    initialView: 'dayGridMonth',
+    plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: 'dayGridMonth,timeGridWeek,timeGridDay' // Ajoute les vues Mois, Semaine et Jour
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
     },
-    selectable: true, // Permet de sélectionner une plage horaire
-    editable: true, // Permet de modifier un événement par glisser-déposer
-    events: [
-      { title: 'Réunion', start: '2025-03-21T12:00:00', end: '22025-03-21T13:00:00', description: 'Réunion importante avec l’équipe' },
-      { title: 'Déjeuner', start: '2025-03-21T12:00:00', end: '2025-03-21T13:00:00', description: 'Déjeuner avec le client' },
-      { title: 'Projet Angular', start: '2025-03-19T09:00:00', end: '2025-03-19T11:00:00', description: 'Développement du projet Angular' },
-    ],
+    selectable: true,
+    editable: true,
     eventClick: (info) => {
-      // Lors du clic sur l'événement, afficher le modal avec les détails
       this.openModal(info.event);
     }
   };
 
-  // Fonction pour ouvrir le modal avec les détails
   openModal(event) {
     const modal = document.getElementById('eventModal');
     const modalTitle = modal?.querySelector('.modal-title');
@@ -43,19 +114,20 @@ export class CalendrierComponent {
     if (modal && modalTitle && modalBody) {
       modalTitle.textContent = event.title;
       modalBody.innerHTML = `
-        <p><strong>Date de début :</strong> ${event.start.toLocaleString()}</p>
-        <p><strong>Date de fin :</strong> ${event.end.toLocaleString()}</p>
-        <p><strong>Description :</strong> ${event.extendedProps.description}</p>
+        <p><strong>Date début :</strong> ${event.start.toLocaleString()}</p>
+        <p><strong>Dealine :</strong> ${event.end.toLocaleString()}</p>
+        <p><strong>Numero devis :</strong> ${event.extendedProps.NumeroDevis}</p>
       `;
-      modal.style.display = 'block'; // Affiche le modal
+      modal.style.display = 'block';
     }
   }
 
-  // Fonction pour fermer le modal
   closeModal() {
     const modal = document.getElementById('eventModal');
     if (modal) {
-      modal.style.display = 'none'; // Ferme le modal
+      modal.style.display = 'none';
     }
   }
+
+
 }

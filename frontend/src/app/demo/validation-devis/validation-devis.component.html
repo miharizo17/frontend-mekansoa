@@ -1,68 +1,87 @@
 <div class="row">
   <div class="col-sm-12">
-    <app-card cardTitle="Validation et Assignement tache au mecanicien">
-      <p>Service</p>
-      <table class="table table-striped table-hover mt-3">
-        <thead>
-          <tr>
-            <th border="1">Id</th>
-            <th border="1">Service</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let service of listeService; let i = index">
-            <td>{{ service.idService._id }}</td>
-            <td>{{ service.idService.nomService }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p>Specialite Service</p>
+    <app-card cardTitle="Validation et Assignation tache au mecanicien">
+      <h5>⚙️Specialite Service</h5>
       <div *ngFor="let service of groupedServices">
-        <h3>{{ service.nomService }}</h3>
-        <ul>
-          <li *ngFor="let specialite of service.specialites">
-            {{ specialite.nomSpecialite }}
-          </li>
-        </ul>
+        {{ service.nomService }} : {{ getSpecialitesAsString(service) }}
+        <br>
       </div>
+      <p class="mt-3"><b>⚙️Duree(heure): </b>{{ heureFini }}:{{ minuteFini }}</p>
 
-      <p>Employes qui ont ces specialite</p>
-      <div *ngFor="let employe of listeEmployeGroupee">
-        <h5>{{ employe.nom }}</h5>
-        <div *ngFor="let specialite of employe.specialites">
-          <label>
-
-            {{ specialite }}
+      <h5 class="mt-3">⚙️Liste des employes disponibles depuis le {{ dateHeureActuelle | date:'dd/MM/yyyy HH:mm' }}</h5>
+      <h6 class="mt-1">➖Mecaniciens Sans Affectation</h6>
+      <div *ngIf="listeEmployeDispo && listeEmployeDispo.length > 0; else noEmployes">
+        <span *ngFor="let employe of listeEmployeDispo; let i = index">
+          <input type="checkbox" [id]="'employe-' + i" [value]="employe.nom"
+            (change)="toggleSelection(employe._id, $event)">
+          <label [for]="'employe-' + i">
+            {{ employe.nom }} ({{ employe.specialites.join(', ') }})
           </label>
-        </div>
+          <br>
+        </span>
       </div>
+      <ng-template #noEmployes>
+        <p class="text-center text-muted">Tous les employés sont affectés au planning.</p>
+      </ng-template>
 
-      <p>Employe dispo</p>
-      <ul>
-        <li *ngFor="let employe of listeEmployeDispo">
-          {{ employe.nom }} ({{ employe.specialites.join(', ') }})
-        </li>
-      </ul>
-
-      <p>Employe deja affecte</p>
-      <table class="table table-striped table-hover mt-3">
+      <h6 class="mt-4">➖Mecaniciens Déjà Affecté</h6>
+      <table class="table">
         <thead>
           <tr>
-            <th border="1">Deadline</th>
-            <th border="1">Nom employe</th>
+            <th>Nom</th>
+            <th>Deadline</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let employe of listeEmployeAffecte; let i = index">
-            <td>{{ employe.deadline }}</td>
-            <td>{{ employe.idEmploye }}</td>
+            <td>
+              <input type="checkbox" [id]="'employe-' + i" [value]="employe.nom"
+                (change)="toggleSelection(employe.idEmploye._id, $event)">{{ employe.idEmploye.nom }}
+            </td>
+            <td> {{ employe.deadline | date:'dd/MM/yyyy HH:mm' }}</td>
+          </tr>
+          <tr *ngIf="!listeEmployeAffecte || listeEmployeAffecte.length === 0">
+            <td colspan="3" class="text-center text-muted">
+              Il n'y a pas encore d'employés assignés à des tâches.
+            </td>
           </tr>
         </tbody>
       </table>
 
+      <div class="d-flex justify-content-end mt-4">
+        <button *ngIf="listeDemandedevis[0]?.etat == 1; else dejaValider" class="btn btn-primary"
+          (click)="ajoutPlanningEmploye()" [disabled]="employesSelectionnes.length === 0">
+          Assigner
+        </button>
+        <ng-template #dejaValider>
+          <button class="btn btn-primary"  [routerLink]="['/detailDemandeDevis', listeDemandedevis[0]?._id]">
+            Detail
+          </button>
+        </ng-template>
+
+      </div>
     </app-card>
   </div>
 </div>
 
 
+<div class="modal fade" id="confirmationAssignement" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-custom">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form autocomplete="off">
+        <div class="modal-body">
+          <div class="mb-3">
+            <p>Affectation aux mécaniciens effectuée avec succès.✅</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

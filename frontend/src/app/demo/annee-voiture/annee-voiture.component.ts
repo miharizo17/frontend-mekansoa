@@ -31,6 +31,7 @@ export class AnneeVoitureComponent implements OnInit {
     console.log('ito eeee');
     this.anneeService.getAnnee().subscribe(data =>{
       console.log('Données reçues:', data);
+      
       this.annees = data
     }
     );

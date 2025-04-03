@@ -7,33 +7,25 @@
         <div class="kanban-column">
           <h5 class="kanban-header">A FAIRE</h5>
           <div class="kanban-card">
-            <div class="card">
+            <div class="card" *ngFor="let planning of planningAFaire; let i = index">
               <div class="card-body">
                 <button id="inactiveButton" class="btn btn" style="background-color: yellow; color: black;" disabled>
-                  <mat-icon>calendar_today</mat-icon> Date entree
+                  <mat-icon>calendar_today</mat-icon> {{  getFormattedDate(planning.dateDebut) }}
                 </button>
-                <button id="inactiveButton" class="btn btn-secondary" style="background-color: transparent; color: black; border: none;" disabled>
-                  <b>Immatricule</b>
-                </button>
-
                 &nbsp;&nbsp;&nbsp;
-                <button id="inactiveButton" class="btn btn-secondary" style="background-color: transparent; color: black; border: none;" disabled>
-                  <b>Type voiture</b>
-                </button>
-
+                <b>{{ planning.numeroTache }}</b>
                 <br>
                 <br>
-                <b>Type service</b>
+                <b>{{ planning.idDevis.numeroDevis }}</b>
                 &nbsp;&nbsp;&nbsp;
                 <p class="card-time"> </p>
-                <a href="#" class="btn btn-warning btn-add btn-sm  m-1" id="linkToDisable">
-                  <mat-icon>schedule</mat-icon> Deadline
+                <a  class="btn btn-warning btn-add btn-sm  m-1" id="linkToDisable">
+                  <mat-icon>schedule</mat-icon> {{ getFormattedDate(planning.deadline) }}
                 </a>
-                <a href="#" class="btn btn-primary btn-info btn-sm  m-1" style="width: 50px;">
+                <a  class="btn btn-primary btn-info btn-sm  m-1" style="width: 50px;" (click)="voirDetailDemande(planning.idDevis._id)">
                   <mat-icon>visibility</mat-icon>
                 </a>
-                <button type="button" class="btn btn-success btn-finish  m-1 btn-sm" style="width: 50px;"
-                  data-toggle="modal" data-target="#finEtape" data-id="" data-idetape="5">
+                <button type="button" class="btn btn-success btn-finish  m-1 btn-sm" style="width: 50px;" (click)="confirmationCommencement(planning._id,planning.numeroTache)">
                   <mat-icon>check</mat-icon>
                 </button>
               </div>
@@ -44,33 +36,26 @@
         <div class="kanban-column">
           <h5 class="kanban-header">EN COURS</h5>
           <div class="kanban-card">
-            <div class="card">
+            <div class="card" *ngFor="let planning of planningEnCours; let i = index">
               <div class="card-body">
                 <button id="inactiveButton" class="btn btn" style="background-color: yellow; color: black;" disabled>
-                  <mat-icon>calendar_today</mat-icon> Date entree
+                  <mat-icon>calendar_today</mat-icon> {{  getFormattedDate(planning.dateDebutTache) }}
                 </button>
-                <button id="inactiveButton" class="btn btn-secondary" style="background-color: transparent; color: black; border: none;" disabled>
-                  <b>Immatricule</b>
-                </button>
-
                 &nbsp;&nbsp;&nbsp;
-                <button id="inactiveButton" class="btn btn-secondary" style="background-color: transparent; color: black; border: none;" disabled>
-                  <b>Type voiture</b>
-                </button>
-
+                <b>{{ planning.numeroTache }}</b>
                 <br>
                 <br>
-                <b>Type service</b>
+                <b>{{ planning.idDevis.numeroDevis }}</b>
                 &nbsp;&nbsp;&nbsp;
                 <p class="card-time"> </p>
                 <a href="#" class="btn btn-warning btn-add btn-sm  m-1" id="linkToDisable">
-                  <mat-icon>schedule</mat-icon> Deadline
+                  <mat-icon>schedule</mat-icon> {{ getFormattedDate(planning.deadline) }}
                 </a>
-                <a href="#" class="btn btn-primary btn-info btn-sm  m-1" style="width: 50px;">
+                <a class="btn btn-primary btn-info btn-sm  m-1" style="width: 50px;" (click)="voirDetailDemande(planning.idDevis._id)">
                   <mat-icon>visibility</mat-icon>
                 </a>
                 <button type="button" class="btn btn-success btn-finish  m-1 btn-sm" style="width: 50px;"
-                  data-toggle="modal" data-target="#finEtape" data-id="" data-idetape="5">
+                (click)="confirmationAchever(planning._id,planning.numeroTache)">
                   <mat-icon>check</mat-icon>
                 </button>
               </div>
@@ -81,41 +66,28 @@
         <div class="kanban-column">
           <h5 class="kanban-header">TERMINER</h5>
           <div class="kanban-card">
-            <div class="card">
+            <div class="card" *ngFor="let planning of planningTerminer; let i = index">
               <div class="card-body">
                 <button id="inactiveButton" class="btn btn" style="background-color: yellow; color: black;" disabled>
-                  <mat-icon>calendar_today</mat-icon> Date entree
+                  <mat-icon>calendar_today</mat-icon> {{  getFormattedDate(planning.dateFinTache) }}
                 </button>
-                <button id="inactiveButton" class="btn btn-secondary" style="background-color: transparent; color: black; border: none;" disabled>
-                  <b>Immatricule</b>
-                </button>
-
                 &nbsp;&nbsp;&nbsp;
-                <button id="inactiveButton" class="btn btn-secondary" style="background-color: transparent; color: black; border: none;" disabled>
-                  <b>Type voiture</b>
-                </button>
-
+                <b>{{ planning.numeroTache }}</b>
                 <br>
                 <br>
-                <b>Type service</b>
+                <b>{{ planning.idDevis.numeroDevis }}</b>
                 &nbsp;&nbsp;&nbsp;
                 <p class="card-time"> </p>
                 <a href="#" class="btn btn-warning btn-add btn-sm  m-1" id="linkToDisable">
-                  <mat-icon>schedule</mat-icon> Deadline
+                  <mat-icon>schedule</mat-icon> {{ getFormattedDate(planning.deadline) }}
                 </a>
-                <a href="#" class="btn btn-primary btn-info btn-sm  m-1" style="width: 50px;">
+                <a  class="btn btn-primary btn-info btn-sm  m-1" style="width: 50px;" (click)="voirDetailDemande(planning.idDevis._id)">
                   <mat-icon>visibility</mat-icon>
                 </a>
-                <button type="button" class="btn btn-success btn-finish  m-1 btn-sm" style="width: 50px;"
-                  data-toggle="modal" data-target="#finEtape" data-id="" data-idetape="5">
-                  <mat-icon>check</mat-icon>
-                </button>
               </div>
             </div>
           </div>
         </div>
-
-
 
       </div>
 
@@ -123,8 +95,110 @@
   </div>
 </div>
 
+<div class="modal fade" id="confirmationCommencement" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-custom">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Demande de confirmation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form autocomplete="off">
+        <div class="modal-body">
+          <div class="mb-3">
+            <p>Etes-vous sûr de vouloir commencer la tâche {{ numeroTache}}?</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal" (click)="mettreTacheEnCours(idPlanning)">Oui</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 
+<div class="modal fade" id="confirmationAchever" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-custom">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Demande de confirmation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form autocomplete="off">
+        <div class="modal-body">
+          <div class="mb-3">
+            <p>La {{ numeroTache}} est-elle bien achevée?</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal" (click)="mettreTacheTerminer(idPlanning)">Oui</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="detailDemande" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-custom1">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detail demande</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form autocomplete="off">
+        <div class="modal-body">
+          <p>Numero devis : {{ listeDemandedevis[0]?.numeroDevis }}</p>
+          <p>Numero serie : {{ listeDemandedevis[0]?.idVoitureClient.numeroService }}</p>
+          <p>Modele : {{ listeDemandedevis[0]?.idVoitureClient.idModele.modele }}</p>
+          <p>Marque : {{ listeDemandedevis[0]?.idVoitureClient.idMarque.marque }}</p>
+          <p>Annee : {{ listeDemandedevis[0]?.idVoitureClient.idAnnee.annee }}</p>
+          <p>Generation : {{ listeDemandedevis[0]?.idVoitureClient.idGeneration.generation }}</p>
+
+          <table class="table table-striped table-hover mt-3">
+            <thead>
+              <tr>
+                <th border="1">Service</th>
+                <th border="1">Quantite</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let detail of listeDetailDemandedevis; let i = index">
+                <td>{{ detail.idService.nomService }}</td>
+                <td>{{ detail.qte }}</td>
+              </tr>
+            </tbody>
+
+          </table>
+
+          <table class="table table-striped table-hover mt-3" *ngIf="listeDetailPieceDemande.length > 0">
+            <thead>
+              <tr>
+                <th>Piece</th>
+                <th>Quantité</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let piece of listeDetailPieceDemande; let i = index">
+                <td>{{ piece.idPiece.nomPiece }}({{ piece.idPiece.referencePiece }})</td>
+                <td>{{ piece.qte }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 
 

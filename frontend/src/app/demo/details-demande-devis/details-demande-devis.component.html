@@ -1,11 +1,21 @@
 <div class="row">
   <div class="col-sm-12">
-    <app-card cardTitle="Detail entree piece">
+    <app-card cardTitle="Detail demande devis">
 
       <div class="d-flex justify-content-between align-items-center">
         <p class="mb-0">Date demande : {{ getFormattedDate(listeDemandedevis[0]?.dateDemandeDevis) }}</p>
         <div class="ms-auto">
-          <button class="btn btn-warning me-2" [routerLink]="['/validationDevis', listeDemandedevis[0]?._id]">Valider</button>
+          <button *ngIf="listeDemandedevis[0]?.etat == 1" class="btn btn-warning me-2"
+            (click)="openModalValideDemande()">Valider</button>
+          <button *ngIf="listeDemandedevis[0]?.etat == 3" class="btn btn-success me-2"
+            (click)="openModalAjoutFacture()">Facturer</button>
+          <button *ngIf="listeDemandedevis[0]?.etat == 4" class="btn btn-success me-2"
+            (click)="openModalVoirFacture()">Voir facture</button>
+          <button
+            *ngIf="listeDemandedevis[0]?.etat == 2 || listeDemandedevis[0]?.etat == 3 || listeDemandedevis[0]?.etat == 4"
+            class="btn btn-info me-2" (click)="openModalVoirResponsable()">
+            Responsable
+          </button>
           <button class="btn btn-primary" (click)="openModalVoirDevis()">Voir Devis</button>
         </div>
       </div>
@@ -13,7 +23,7 @@
 
 
       <p>Client : {{ listeDemandedevis[0]?.idVoitureClient.idClient.nom }}</p>
-      <p>Numero devis : DEVIS_{{ listeDemandedevis[0]?._id }}</p>
+      <p>Numero devis : {{ listeDemandedevis[0]?.numeroDevis }}</p>
       <p>Numero serie : {{ listeDemandedevis[0]?.idVoitureClient.numeroService }}</p>
       <p>Modele : {{ listeDemandedevis[0]?.idVoitureClient.idModele.modele }}(Note: {{
         listeDemandedevis[0]?.idVoitureClient.idModele.note }})</p>
@@ -41,11 +51,11 @@
             <tr *ngFor="let detail of listeDetailDemandedevis; let i = index">
               <td>{{ detail.idService.nomService }}</td>
               <td>{{ detail.qte }}</td>
-              <td>{{ detail.idService.prixBase  | number: '1.2-2' }}</td>
-              <td>{{ (detail.idService.prixBase * noteTotal)  | number: '1.2-2' }}</td>
-              <td>{{ (detail.idService.prixBase * noteTotal) * detail.qte  | number: '1.2-2' }}</td>
-              <td>    <input type="text" class="form-control" [(ngModel)]="prixSurplus[i]" name="prixSurplus{{i}}"
-                [disabled]="listeDemandedevis[0]?.isDomicile==0">
+              <td>{{ detail.idService.prixBase | number: '1.2-2' }}</td>
+              <td>{{ (detail.idService.prixBase * noteTotal) | number: '1.2-2' }}</td>
+              <td>{{ (detail.idService.prixBase * noteTotal) * detail.qte | number: '1.2-2' }}</td>
+              <td> <input type="text" class="form-control" [(ngModel)]="prixSurplus[i]" name="prixSurplus{{i}}"
+                  [disabled]="listeDemandedevis[0]?.isDomicile==0">
               </td>
               <td></td>
             </tr>
@@ -71,11 +81,12 @@
             <tr *ngFor="let detail of listeDetailDemandedevis; let i = index">
               <td>{{ detail.idService.nomService }}</td>
               <td>{{ detail.qte }}</td>
-              <td>{{ detail.prixBaseService  | number: '1.2-2' }}</td>
-              <td>{{ (detail.prixBaseService * noteTotal)  | number: '1.2-2' }}</td>
-              <td>{{ (detail.prixServiceSurPlus ?? 0)  | number: '1.2-2' }}</td>
-              <td>{{ (detail.prixServiceSurPlus ?? 0) +  (detail.prixBaseService * noteTotal) | number: '1.2-2' }}</td>
-              <td>{{ ((detail.prixServiceSurPlus ?? 0) +  (detail.prixBaseService * noteTotal)) * detail.qte  | number: '1.2-2' }}</td>
+              <td>{{ detail.prixBaseService | number: '1.2-2' }}</td>
+              <td>{{ (detail.prixBaseService * noteTotal) | number: '1.2-2' }}</td>
+              <td>{{ (detail.prixServiceSurPlus ?? 0) | number: '1.2-2' }}</td>
+              <td>{{ (detail.prixServiceSurPlus ?? 0) + (detail.prixBaseService * noteTotal) | number: '1.2-2' }}</td>
+              <td>{{ ((detail.prixServiceSurPlus ?? 0) + (detail.prixBaseService * noteTotal)) * detail.qte | number:
+                '1.2-2' }}</td>
             </tr>
           </tbody>
         </table>
@@ -141,7 +152,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let item of piecesAjoutees; let i = index">
-                <td>{{ item.piece }}({{ item.referencePiece }})</td>
+                <td>{{ item.piece }}{{ item.referencePiece }}</td>
                 <td>{{ item.prixUnitairePiece }}</td>
                 <td>{{ item.nombre }}</td>
                 <td>
@@ -168,10 +179,10 @@
         </div>
         <div *ngIf="listeDemandedevis[0]?.isDomicile==1">
           <div class="col-2 mt-2">
-            <label class="form-label">Frais: {{ listeDemandedevis[0]?.frais  | number: '1.2-2'}} Ar</label>
+            <label class="form-label">Frais: {{ listeDemandedevis[0]?.frais | number: '1.2-2'}} Ar</label>
           </div>
         </div>
-        <table class="table table-striped table-hover mt-3"  *ngIf="listeDetailPieceDemande.length > 0">
+        <table class="table table-striped table-hover mt-3" *ngIf="listeDetailPieceDemande.length > 0">
           <thead>
             <tr>
               <th border="1">Piece</th>
@@ -184,8 +195,8 @@
             <tr *ngFor="let piece of listeDetailPieceDemande; let i = index">
               <td>{{ piece.idPiece.nomPiece }}({{ piece.idPiece.referencePiece }})</td>
               <td>{{ piece.qte }}</td>
-              <td>{{ piece.prixUnitairePiece  | number: '1.2-2' }}</td>
-              <td>{{ piece.prixUnitairePiece * piece.qte  | number: '1.2-2'}}</td>
+              <td>{{ piece.prixUnitairePiece | number: '1.2-2' }}</td>
+              <td>{{ piece.prixUnitairePiece * piece.qte | number: '1.2-2'}}</td>
             </tr>
           </tbody>
 
@@ -196,7 +207,6 @@
 
 
     <!-- Modal voir devis -->
-    <!-- Modal -->
     <div class="modal fade" id="devisModal" tabindex="-1" aria-labelledby="devisModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -219,11 +229,12 @@
                 <p><strong>Email :</strong> kantomiharizo&#64;gmail.com</p>
                 <p><strong>Contact :</strong> 034 11 481 57</p>
                 <p><strong>Adresse :</strong> Andoharanofotsy</p>
+                <p><strong>Numero :</strong>{{ listeDemandedevis[0]?.numeroDevis }}</p>
               </div>
 
 
               <div>
-                <p><strong>Nom :</strong>  {{ listeDemandedevis[0]?.idVoitureClient.idClient.nom }}</p>
+                <p><strong>Nom :</strong> {{ listeDemandedevis[0]?.idVoitureClient.idClient.nom }}</p>
                 <p><strong>Email :</strong> {{ listeDemandedevis[0]?.idVoitureClient.idClient.email }}</p>
                 <p><strong>Contact :</strong> {{ listeDemandedevis[0]?.idVoitureClient.idClient.telephone }}</p>
                 <p><strong>Adresse :</strong> {{ listeDemandedevis[0]?.idVoitureClient.idClient.adresse }}</p>
@@ -245,14 +256,14 @@
                   <tr *ngFor="let detail of listeDetailDemandedevis; let i = index">
                     <td>{{ detail.idService.nomService }}</td>
                     <td>{{ detail.qte }}</td>
-                    <td>{{ (detail.idService.prixBase * noteTotal) * detail.qte  | number: '1.2-2' }}</td>
+                    <td>{{ (detail.idService.prixBase * noteTotal) * detail.qte | number: '1.2-2' }}</td>
                   </tr>
                 </tbody>
 
               </table>
             </div>
             <ng-template #avecDatassss>
-              <table class="table table-striped table-hover mt-3" >
+              <table class="table table-striped table-hover mt-3">
                 <thead>
                   <tr>
                     <th border="1">Service</th>
@@ -265,8 +276,10 @@
                   <tr *ngFor="let detail of listeDetailDemandedevis; let i = index">
                     <td>{{ detail.idService.nomService }}</td>
                     <td>{{ detail.qte }}</td>
-                    <td>{{ ((detail.prixServiceSurPlus ?? 0)+(detail.prixBaseService * noteTotal)) | number: '1.2-2' }}</td>
-                    <td>{{ ((detail.prixServiceSurPlus ?? 0)+(detail.prixBaseService * noteTotal))  * detail.qte  | number: '1.2-2' }}</td>
+                    <td>{{ ((detail.prixServiceSurPlus ?? 0)+(detail.prixBaseService * noteTotal)) | number: '1.2-2' }}
+                    </td>
+                    <td>{{ ((detail.prixServiceSurPlus ?? 0)+(detail.prixBaseService * noteTotal)) * detail.qte |
+                      number: '1.2-2' }}</td>
                   </tr>
                 </tbody>
 
@@ -274,31 +287,31 @@
             </ng-template>
 
 
-              <h6 class="mt-4" *ngIf="listeDetailPieceDemande.length > 0">Détails piece</h6>
-              <table class="table table-striped table-hover mt-3" *ngIf="listeDetailPieceDemande.length > 0">
-                <thead>
-                  <tr>
-                    <th>Piece</th>
-                    <th>Quantité</th>
-                    <th>Prix unitaire</th>
-                    <th>Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let piece of listeDetailPieceDemande; let i = index">
-                    <td>{{ piece.idPiece.nomPiece }}({{ piece.idPiece.referencePiece }})</td>
-                    <td>{{ piece.qte }}</td>
-                    <td>{{ piece.prixUnitairePiece | number: '1.2-2' }}</td>
-                    <td>{{ piece.prixUnitairePiece * piece.qte  | number: '1.2-2'}}</td>
-                  </tr>
-                </tbody>
-              </table>
+            <h6 class="mt-4" *ngIf="listeDetailPieceDemande.length > 0">Détails piece</h6>
+            <table class="table table-striped table-hover mt-3" *ngIf="listeDetailPieceDemande.length > 0">
+              <thead>
+                <tr>
+                  <th>Piece</th>
+                  <th>Quantité</th>
+                  <th>Prix unitaire</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let piece of listeDetailPieceDemande; let i = index">
+                  <td>{{ piece.idPiece.nomPiece }}({{ piece.idPiece.referencePiece }})</td>
+                  <td>{{ piece.qte }}</td>
+                  <td>{{ piece.prixUnitairePiece | number: '1.2-2' }}</td>
+                  <td>{{ piece.prixUnitairePiece * piece.qte | number: '1.2-2'}}</td>
+                </tr>
+              </tbody>
+            </table>
 
-              <div *ngIf="listeDemandedevis[0]?.isDomicile==1">
-                <div class="d-flex justify-content-end mt-3">
-                  <h5>Frais : {{ listeDemandedevis[0]?.frais  | number: '1.2-2'}} Ar</h5>
-                </div>
+            <div *ngIf="listeDemandedevis[0]?.isDomicile==1">
+              <div class="d-flex justify-content-end mt-3">
+                <h5>Frais : {{ listeDemandedevis[0]?.frais | number: '1.2-2'}} Ar</h5>
               </div>
+            </div>
             <!-- Total -->
             <div *ngIf="heureFini == '00' && minuteFini == '00'; else prixApres">
               <div class="d-flex justify-content-end mt-3">
@@ -307,7 +320,8 @@
             </div>
             <ng-template #prixApres>
               <div class="d-flex justify-content-end mt-3">
-                <h5>Total : {{ getTotalPiece()+getTotalService() +( listeDemandedevis[0]?.frais ?? 0) | number: '1.2-2' }} Ar</h5>
+                <h5>Total : {{ getTotalPiece()+getTotalService() +( listeDemandedevis[0]?.frais ?? 0) | number: '1.2-2'
+                  }} Ar</h5>
               </div>
             </ng-template>
 
@@ -319,12 +333,9 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-            <div *ngIf="heureFini == '00' && minuteFini == '00'; else analyser">
-              <button type="button" class="btn btn-primary" (click)="envoieDevisMail()" disabled>Envoyer</button>
-            </div>
-            <ng-template #analyser>
+            <div *ngIf="heureFini != '00' || minuteFini != '00' && listeDemandedevis[0]?.etat==0">
               <button type="button" class="btn btn-primary" (click)="envoieDevisMail()">Envoyer</button>
-            </ng-template>
+            </div>
 
           </div>
         </div>
@@ -366,13 +377,238 @@
       <form autocomplete="off">
         <div class="modal-body">
           <div class="mb-3">
-            <p>⚠️L'e-mail n'a pas pu être envoyé. Assurez-vous que votre connexion Internet est stable avant de réessayer.</p>
+            <p>⚠️L'e-mail n'a pas pu être envoyé. Assurez-vous que votre connexion Internet est stable avant de
+              réessayer.</p>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="valideDemandeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-custom1">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Validation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form autocomplete="off">
+        <div class="modal-body">
+          <div class="mb-3">
+            <input type="datetime-local" [(ngModel)]="dateHeureActuelle" name="dateHeureActuelle">
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          <button class="btn btn-success me-2" data-bs-dismiss="modal" (click)="validerDemande()">
+            Confirmer
+          </button>
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="voirResponsable" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-custom1">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Mecaniciens affectés</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form autocomplete="off">
+        <div class="modal-body">
+          <table class="table table-striped table-hover mt-3">
+            <thead>
+              <tr>
+                <th border="1">Nom</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let employe of listeEmployeDemande; let i = index">
+                <td>{{ employe.idEmploye.nom }}</td>
+              </tr>
+            </tbody>
+
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="ajoutFacture" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-custom1">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Facturation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form autocomplete="off">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-12">
+              <input class="form-control" type="datetime-local" [(ngModel)]="dateFacturation" name="dateFacturation">
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <select class="form-control" [(ngModel)]="selectedModePaiement" name="selectedModePaiement">
+              @for (mode of modePaiement; track mode._id) {
+              <option value="{{ mode._id }}">{{ mode.nomMode }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          <button class="btn btn-success me-2" data-bs-dismiss="modal" (click)="facturerDemande()">
+            Valider
+          </button>
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal voir facture -->
+<div class="modal fade" id="factureModal" tabindex="-1" aria-labelledby="devisModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="devisModalLabel">Facture</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="pdfFacture">
+        <div class="text-center mb-4">
+          <img src="assets/images/kansoa.png" alt="me-kan'soa" class="img-fluid"
+            style="max-width: 150px; max-height: 70px">
+          <p><b>
+              <h3>FACTURE </h3>
+            </b></p>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <div>
+            <p><strong>Nom :</strong> Me-kan'soa</p>
+            <p><strong>Email :</strong> kantomiharizo&#64;gmail.com</p>
+            <p><strong>Contact :</strong> 034 11 481 57</p>
+            <p><strong>Adresse :</strong> Andoharanofotsy</p>
+            <p><strong>Numero :</strong>{{ numeroFact }}({{ modePaiements }})</p>
+          </div>
+
+
+          <div>
+            <p><strong>Nom :</strong> {{ listeDemandedevis[0]?.idVoitureClient.idClient.nom }}</p>
+            <p><strong>Email :</strong> {{ listeDemandedevis[0]?.idVoitureClient.idClient.email }}</p>
+            <p><strong>Contact :</strong> {{ listeDemandedevis[0]?.idVoitureClient.idClient.telephone }}</p>
+            <p><strong>Adresse :</strong> {{ listeDemandedevis[0]?.idVoitureClient.idClient.adresse }}</p>
+            <p><strong>Date Facturation :</strong>{{ dateFacturations | date:'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+        </div>
+
+        <h6 class="mt-4">Détails du services</h6>
+        <div *ngIf="heureFini == '00' && minuteFini == '00'; else avecDatassss">
+          <table class="table table-striped table-hover mt-3">
+            <thead>
+              <tr>
+                <th border="1">Service</th>
+                <th border="1">Quantite</th>
+                <th border="1">Prix de vente(Ar)</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let detail of listeDetailDemandedevis; let i = index">
+                <td>{{ detail.idService.nomService }}</td>
+                <td>{{ detail.qte }}</td>
+                <td>{{ (detail.idService.prixBase * noteTotal) * detail.qte | number: '1.2-2' }}</td>
+              </tr>
+            </tbody>
+
+          </table>
+        </div>
+        <ng-template #avecDatassss>
+          <table class="table table-striped table-hover mt-3">
+            <thead>
+              <tr>
+                <th border="1">Service</th>
+                <th border="1">Quantite</th>
+                <th border="1">Prix de vente(Ar)</th>
+                <th border="1">Total(Ar)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let detail of listeDetailDemandedevis; let i = index">
+                <td>{{ detail.idService.nomService }}</td>
+                <td>{{ detail.qte }}</td>
+                <td>{{ ((detail.prixServiceSurPlus ?? 0)+(detail.prixBaseService * noteTotal)) | number: '1.2-2' }}
+                </td>
+                <td>{{ ((detail.prixServiceSurPlus ?? 0)+(detail.prixBaseService * noteTotal)) * detail.qte |
+                  number: '1.2-2' }}</td>
+              </tr>
+            </tbody>
+
+          </table>
+        </ng-template>
+
+
+        <h6 class="mt-4" *ngIf="listeDetailPieceDemande.length > 0">Détails piece</h6>
+        <table class="table table-striped table-hover mt-3" *ngIf="listeDetailPieceDemande.length > 0">
+          <thead>
+            <tr>
+              <th>Piece</th>
+              <th>Quantité</th>
+              <th>Prix unitaire</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let piece of listeDetailPieceDemande; let i = index">
+              <td>{{ piece.idPiece.nomPiece }}({{ piece.idPiece.referencePiece }})</td>
+              <td>{{ piece.qte }}</td>
+              <td>{{ piece.prixUnitairePiece | number: '1.2-2' }}</td>
+              <td>{{ piece.prixUnitairePiece * piece.qte | number: '1.2-2'}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div *ngIf="listeDemandedevis[0]?.isDomicile==1">
+          <div class="d-flex justify-content-end mt-3">
+            <h5>Frais : {{ listeDemandedevis[0]?.frais | number: '1.2-2'}} Ar</h5>
+          </div>
+        </div>
+        <!-- Total -->
+        <div *ngIf="heureFini == '00' && minuteFini == '00'; else prixApres">
+          <div class="d-flex justify-content-end mt-3">
+            <h5>Total : {{ getTotalService() + ( listeDemandedevis[0]?.frais ?? 0) | number: '1.2-2'}} Ar</h5>
+          </div>
+        </div>
+        <ng-template #prixApres>
+          <div class="d-flex justify-content-end mt-3">
+            <h5>Total : {{ getTotalPiece()+getTotalService() +( listeDemandedevis[0]?.frais ?? 0) | number: '1.2-2'
+              }} Ar</h5>
+          </div>
+        </ng-template>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary" (click)="exportAsPDF()">Generer facture</button>
+
+      </div>
     </div>
   </div>
 </div>

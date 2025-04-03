@@ -11,7 +11,7 @@ const routes: Routes = [
     component: AdminComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: '', redirectTo: '/default',
+      { path: '', redirectTo: '/choixLogin',
         pathMatch: 'full'
       },
       { path: 'default',
@@ -113,6 +113,9 @@ const routes: Routes = [
       { path: 'validationDevis/:idDemandeDevis',
         loadComponent: () => import('./demo/validation-devis/validation-devis.component').then(m => m.ValidationDevisComponent), canActivate: [AuthGuard]
       },
+      { path: 'historiqueTache',
+        loadComponent: () => import('./demo/Mecanicien/historique-tache/historique-tache.component').then(m => m.HistoriqueTacheComponent), canActivate: [AuthGuard]
+      },
     ]
   },
   {
@@ -155,7 +158,40 @@ const routes: Routes = [
       }
 
     ]
-  }
+  },
+  {
+    path: '',
+    children: [
+      {
+        path: 'choixLogin',
+        loadComponent: () => import('./demo/choix-login/choix-login.component').then(m => m.ChoixLoginComponent),
+        // canActivate: [AuthGuard]
+      }
+
+    ]
+  },
+  {
+    path: '',
+    children: [
+      {
+        path: 'loginManager',
+        loadComponent: () => import('./demo/login/login-manager/login-manager.component').then(m => m.LoginManagerComponent),
+        // canActivate: [AuthGuard]
+      }
+
+    ]
+  },
+  {
+    path: '',
+    children: [
+      {
+        path: 'loginMecanicien',
+        loadComponent: () => import('./demo/login/login-mecanicien/login-mecanicien.component').then(m => m.LoginMecanicienComponent),
+        // canActivate: [AuthGuard]
+      }
+
+    ]
+  }
 
 ];
 

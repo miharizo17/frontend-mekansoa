@@ -16,24 +16,24 @@ export class SpecialiteService {
   // Liste
   getSpecialite(): Observable<any> {
     console.log(this.apiUrl);
-    return this.http.get(this.apiUrl,{ headers: this.headers });
+    return this.http.get(this.apiUrl, { headers: this.headers });
   }
 
   // Create
   addSpecialite(nomSpecialite: string): Observable<any> {
     const body ={ nomSpecialite};
-    return this.http.post(this.apiUrl, body,{ headers: this.headers });
+    return this.http.post(this.apiUrl, body, { headers: this.headers });
   }
 
   // Update
   updateSpecialite(id: string, nomSpecialite: string): Observable<any> {
     const body = {nomSpecialite};
     console.log(`${this.apiUrl}/${id}`);
-    return this.http.put(`${this.apiUrl}/${id}`, body,{ headers: this.headers });
+    return this.http.put(`${this.apiUrl}/${id}`, body, { headers: this.headers });
   }
 
   // Delete
   deleteSpecialite(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`,{ headers: this.headers });
+    return this.http.delete(`${this.apiUrl}/${id}`, { headers: this.headers });
   }
 }

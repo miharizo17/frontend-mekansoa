@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DemandeDevisService } from 'src/app/services/Client/demande-devis.service';
 import { DetailDemandeDevisService } from 'src/app/services/Client/detail-demande-devis.service';
 import { CardComponent } from "../../theme/shared/components/card/card.component";
@@ -15,6 +15,8 @@ import { GenerationVoitureService } from 'src/app/services/Manager/generation-vo
 import { ModeleVoitureService } from 'src/app/services/Manager/modele-voiture.service';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { PlanningEmployeService } from 'src/app/services/Mecanicien/planning-employe.service';
+import { FactureService } from 'src/app/services/Client/facture.service';
 declare let bootstrap: any;
 @Component({
   selector: 'app-details-demande-devis',
@@ -29,7 +31,9 @@ declare let bootstrap: any;
   providers: [DemandeDevisService,
     DetailDemandeDevisService,
     EntreePieceService,
-    StockPieceService
+    StockPieceService,
+    PlanningEmployeService,
+    FactureService
   ]
 })
 export class DetailsDemandeDevisComponent {
@@ -37,13 +41,24 @@ export class DetailsDemandeDevisComponent {
   listeDemandedevis: any[] = [];
   listeDetailDemandedevis: any[] = [];
   listeDetailPieceDemande: any[] = [];
-  prixSurplus: any[] =[];
+  prixSurplus: any[] = [];
   constructor(private route: ActivatedRoute,
     private demandeDevisService: DemandeDevisService,
     private detailDemandeService: DetailDemandeDevisService,
     private entreeService: EntreePieceService,
-    private stockPieceService: StockPieceService
+    private stockPieceService: StockPieceService,
+    private router: Router,
+    private planningService: PlanningEmployeService,
+    private factureService: FactureService
   ) { }
+
+  dateHeureActuelle: string = '';
+  // setDateHeureActuelle():string {
+  //   const maintenant = new Date();
+  //   const annee = maintenant.getFullYear();
+  //   return this.dateHeureActuelle = maintenant.toISOString().slice(0, 16);
+  // }
+
 
   ngOnInit(): void {
     this.idDemande = (this.route.snapshot.paramMap.get('idDemandeDevis'));
@@ -53,15 +68,25 @@ export class DetailsDemandeDevisComponent {
     this.getTotalPiece();
     this.getTotalService();
     this.prixSurplus = new Array(this.listeDetailDemandedevis.length).fill('');
+    // this.dateHeureActuelle = this.setDateHeureActuelle();
   }
 
+  validerDemande(): void {
+    if (!this.dateHeureActuelle) return; // Évite d'envoyer une valeur vide
+
+    const dateISO = new Date(this.dateHeureActuelle).toISOString(); // Convertit en format ISO
+
+    this.router.navigate(['/validationDevis', this.listeDemandedevis[0]?._id], {
+      queryParams: { date: dateISO }
+    });
+  }
 
   listeIdSevice: any[] = [];
   noteTotal: number = 0;
-  heureFini: string ='00';
-  minuteFini: string ='00';
-  heureFiniAvant: string='00';
-  minuteFiniAvant: string='00';
+  heureFini: string = '00';
+  minuteFini: string = '00';
+  heureFiniAvant: string = '00';
+  minuteFiniAvant: string = '00';
   loadDemandeDevis(): void {
     this.demandeDevisService.getDemandeDevisById(this.idDemande).subscribe(data => {
       this.listeDemandedevis = data;
@@ -93,7 +118,7 @@ export class DetailsDemandeDevisComponent {
   getTotalService(): number {
     return this.listeDetailDemandedevis.reduce((total, service) => {
       const prixServiceSurPlus = service.prixServiceSurPlus ?? 0;
-      return total + ((service.idService.prixBase * this.noteTotal) +prixServiceSurPlus ) * service.qte;
+      return total + ((service.idService.prixBase * this.noteTotal) + prixServiceSurPlus) * service.qte;
     }, 0);
   }
 
@@ -189,11 +214,11 @@ export class DetailsDemandeDevisComponent {
   frais: number = 0;
 
   addPieceDemandeDevis(): void {
-    this.demandeDevisService.ajoutPieceDemandeDevis(this.heureFiniAvant, this.minuteFiniAvant, this.idDemande, this.piecesAjoutees, this.noteTotal, this.listeDetailDemandedevis,this.frais,this.prixSurplus).subscribe(() => {
+    this.demandeDevisService.ajoutPieceDemandeDevis(this.heureFiniAvant, this.minuteFiniAvant, this.idDemande, this.piecesAjoutees, this.noteTotal, this.listeDetailDemandedevis, this.frais, this.prixSurplus).subscribe(() => {
       this.loadDetailDemandeDevis();
       this.loadDemandeDevis();
       this.loadDetailPieceDemandeDevis();
-      this.piecesAjoutees=[];
+      this.piecesAjoutees = [];
 
     });
   }
@@ -207,69 +232,40 @@ export class DetailsDemandeDevisComponent {
   }
 
 
-  // exportAsPDF() {
-  //   const element = document.getElementById('pdfContent'); // Sélectionne l'élément à exporter
-
-  //   if (element) {
-  //     html2canvas(element, { scale: 2 }).then(canvas => {
-  //       const imgData = canvas.toDataURL('image/png');
-  //       const pdf = new jsPDF('p', 'mm', 'a4'); // Portrait, millimètres, format A4
-
-  //       const imgWidth = 210; // Largeur A4 en mm
-  //       const pageHeight = 297; // Hauteur A4 en mm
-  //       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-  //       let heightLeft = imgHeight;
-  //       let position = 0;
-
-  //       pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-  //       heightLeft -= pageHeight;
-
-  //       while (heightLeft > 0) {
-  //         position = heightLeft - imgHeight;
-  //         pdf.addPage();
-  //         pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-  //         heightLeft -= pageHeight;
-  //       }
-
-  //       pdf.save('export.pdf'); // Téléchargement du fichier
-  //     });
-  //   }
-  // }
 
 
-  reponseMail: string='';
+  reponseMail: string = '';
   envoieDevisMail() {
     const element = document.getElementById('pdfDevis');
 
     if (element) {
-        html2canvas(element, { scale: 2 }).then(canvas => {
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'mm', 'a4');
+      html2canvas(element, { scale: 2 }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
 
-            const imgWidth = 210;
-            const pageHeight = 297;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const imgWidth = 210;
+        const pageHeight = 297;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-            let heightLeft = imgHeight;
-            let position = 0;
+        let heightLeft = imgHeight;
+        let position = 0;
 
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
 
-            while (heightLeft > 0) {
-                position = heightLeft - imgHeight;
-                pdf.addPage();
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-            }
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
 
-            const pdfBlob = pdf.output('blob');
+        const pdfBlob = pdf.output('blob');
 
-            const formData = new FormData();
-            formData.append('to', 'randrianoely2512@gmail.com'); // Mettre l'email du destinataire
-            formData.append('subject', 'Reponse demande devis');
-            formData.append('text', `Bonjour Madame, Monsieur
+        const formData = new FormData();
+        formData.append('to', 'randrianoely2512@gmail.com'); // Mettre l'email du destinataire
+        formData.append('subject', 'Reponse demande devis');
+        formData.append('text', `Bonjour Madame, Monsieur
 
               Veuillez trouver en pièce jointe le devis correspondant à votre demande. Nous vous remercions pour votre patience et restons à votre disposition pour toute information complémentaire.
 
@@ -283,41 +279,150 @@ export class DetailsDemandeDevisComponent {
               kantomiharizo@gmail.com
               034 11 481 57
               Andoharanofotsy `);
+        formData.append('idDemandeDevis', this.idDemande);
+        formData.append('attachment', pdfBlob, 'devis.pdf');
 
-            formData.append('attachment', pdfBlob, 'devis.pdf');
-
-            this.demandeDevisService.envoieMail(formData).subscribe(data =>  {
-              this.reponseMail = data;
-              console.log(this.reponseMail);
-              if(this.reponseMail=="envoyer"){
-                const modalElement = document.getElementById('devisEnvoyer');
-                if (modalElement) {
-                  const modalInstance = new bootstrap.Modal(modalElement);
-                  modalInstance.show();
-                }
-              }else{
-                const modalElement = document.getElementById('devisNonEnvoyer');
-                if (modalElement) {
-                  const modalInstance = new bootstrap.Modal(modalElement);
-                  modalInstance.show();
-                }
-              }
-            });
+        this.demandeDevisService.envoieMail(formData).subscribe(data => {
+          this.reponseMail = data;
+          console.log(this.reponseMail);
+          if (this.reponseMail == "envoyer") {
+            const modalElement = document.getElementById('devisEnvoyer');
+            if (modalElement) {
+              const modalInstance = new bootstrap.Modal(modalElement);
+              modalInstance.show();
+            }
+            this.loadDemandeDevis();
+          } else {
+            const modalElement = document.getElementById('devisNonEnvoyer');
+            if (modalElement) {
+              const modalInstance = new bootstrap.Modal(modalElement);
+              modalInstance.show();
+            }
+          }
         });
+      });
     }
-}
+
+  }
 
 
-getFormattedDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleString('fr-FR', {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-  });
-}
+  getFormattedDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleString('fr-FR', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    });
+  }
+
+  openModalValideDemande() {
+    const modalElement = document.getElementById('valideDemandeModal');
+    if (modalElement) {
+      const modalInstance = new bootstrap.Modal(modalElement);
+      modalInstance.show();
+    }
+  }
+
+
+  listeEmployeDemande: any[]=[];
+  loadEmployeDemande(): void {
+    this.planningService.listeEmployeByDemande(this.idDemande).subscribe(data => {
+      this.listeEmployeDemande = data;
+    });
+  }
+
+  openModalVoirResponsable() {
+    this.loadEmployeDemande();
+    const modalElement = document.getElementById('voirResponsable');
+    if (modalElement) {
+      const modalInstance = new bootstrap.Modal(modalElement);
+      modalInstance.show();
+    }
+  }
+
+  modePaiement: any[]=[];
+  selectedModePaiement: any;
+  loadModePaiement(): void {
+    this.factureService.getModePaiement().subscribe(data => {
+      this.modePaiement = data;
+    });
+  }
+
+  dateFacturation: any;
+  openModalAjoutFacture() {
+    this.loadModePaiement();
+    const modalElement = document.getElementById('ajoutFacture');
+    if (modalElement) {
+      const modalInstance = new bootstrap.Modal(modalElement);
+      modalInstance.show();
+    }
+  }
+
+  listeFacturation: any={};
+  numeroFact: string ='';
+  modePaiements: string ='';
+  dateFacturations: string ='';
+  loadFacturationDemande(): void {
+    this.factureService.getFactureDemande(this.idDemande).subscribe(data => {
+      this.listeFacturation = data;
+      this.numeroFact = this.listeFacturation.numeroFacture;
+      this.dateFacturations = this.listeFacturation.dateFacturation;
+      this.modePaiements = this.listeFacturation.idModePaiement.nomMode;
+    });
+  }
+
+
+  facturerDemande(): void {
+    this.factureService.addFactureDemande(this.dateFacturation,this.idDemande, this.selectedModePaiement).subscribe(() => {
+      this.selectedModePaiement="";
+      this.dateFacturation="";
+      this.loadDemandeDevis();
+
+    });
+  }
+
+
+  openModalVoirFacture() {
+    this.loadFacturationDemande();
+    const modalElement = document.getElementById('factureModal');
+    if (modalElement) {
+      const modalInstance = new bootstrap.Modal(modalElement);
+      modalInstance.show();
+    }
+  }
+
+    exportAsPDF() {
+    const element = document.getElementById('pdfFacture');
+
+    if (element) {
+      html2canvas(element, { scale: 2 }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+
+        const imgWidth = 210;
+        const pageHeight = 297;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+        let nomPdf=this.numeroFact+".pdf";
+
+        pdf.save(nomPdf);
+      });
+    }
+  }
 
 
 }

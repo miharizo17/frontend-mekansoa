@@ -9,6 +9,7 @@
       <table class="table table-striped table-hover mt-3">
         <thead>
           <tr>
+            <th border="1">Id</th>
             <th border="1">Date entree</th>
             <th border="1">Nom</th>
             <th border="1">Role</th>
@@ -19,6 +20,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let employe of employes">
+            <td>{{ employe._id }}</td>
             <td>{{ employe.dateEntree }}</td>
             <td>{{ employe.nom }}</td>
             <td>{{ employe.idRole.nomRole }}</td>
